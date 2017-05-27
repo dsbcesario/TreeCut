@@ -1,0 +1,62 @@
+<ion-view title="Denúncia" id="page2" ng-controller="CameraCtrl">
+  <ion-content padding="true" scroll="true" class="has-header">
+
+    <div class="list card">
+      
+    <label class="balanced padding-left">Inserir uma foto</label>
+    
+    <div class="row">
+      <div class="col-33"></div>
+      <div class="col-33" col-center>
+        
+        
+          
+          <div class="item item-image" ng-click="showImages($index)">
+
+            <img ng-src="{{pictureUrl}}" class="image-list-thumb"/>
+
+          </div>
+        
+      </div>
+    </div>
+    
+    <a id="camera-button" ng-click="fotografar()" class="ion-button ion-item item-right button-right round icon-only icon-right button-large ion-camera"></a>
+      
+    </div>
+
+
+
+    <div class="list card">
+    <label class="balanced padding-left">Adicionar o endereço</label>
+      <div>       
+        <label class="item item-input" id="login-input1">
+          <textarea placeholder="Clique no pin e adicione sua localização atual." ng-model="camera.cidade" ng-disabled="true" type="text">
+          </textarea>
+        </label>
+
+     </div>
+     <div>     
+     <a id="camera-button" class="ion-button icon-only icon-right button-large ion-android-pin" ng-click="voltarLocalizacao()"></a>
+   </div>
+     </div>
+
+
+
+
+    <div class="list card">
+      
+    
+      <label class="balanced padding-left">Descrição</label>
+      
+      <label class="item item-input">
+        <textarea placeholder="Insira uma breve descrição." ng-model="obj.detalhes" class="textareas"> </textarea>
+        </label>
+    
+    </div>
+
+    
+      <div>
+        <a class="button button-positive button-block icon-left ion-paper-airplane" ng-click="salvar(camera.cidade)">Enviar Denúncia</a>
+      </div>
+  </ion-content>
+</ion-view>

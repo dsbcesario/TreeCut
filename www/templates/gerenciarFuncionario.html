@@ -1,0 +1,29 @@
+<ion-view title="Genrenciar funcionário(s)" id="page14">
+
+
+  <ion-content padding="true" scroll="false" class="has-header">
+        <div class="list card">
+    <label class="balanced padding-left">Funcionários</label>
+            
+
+        <ion-list>
+      <div>
+        <a class="item item-thumbnail">
+          <div ng-repeat="array in listaFunc">
+            <h2>{{array.nome}}</h2>
+            <p>{{array.email}}</p>
+          </div>
+         
+        </a>
+      </div>
+    </ion-list>
+        
+
+     
+     <div>     
+     <a ui-sref="cadastrarFuncionario" id="addfuncionario-button" class="ion-button icon-only icon-right button-large ion-plus-circled" ng-click=""></a>
+   </div>
+     </div>
+
+  </ion-content>
+</ion-view>

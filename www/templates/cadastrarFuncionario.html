@@ -1,0 +1,28 @@
+<ion-view title="Cadastro" id="page15">
+
+
+  <ion-content padding="true" scroll="false" class="has-header">
+    <form name="formCadastro" class="list">
+      <div class="spacer" style="width: 300px; height: 101px;"></div>
+      <ion-list id="cadastro-list2">
+        <label class="item item-input" id="cadastro-input3">
+          <input placeholder="Nome" required="true" ng-model="user.nome" type="text">
+        </label>
+
+
+        <label class="item item-input" id="cadastro-input4">
+          <input placeholder="E-mail" required="true" ng-model="user.email" type="email">
+        </label>
+        <label class="item item-input">
+          <input placeholder="Senha" id="cadastro-input5" ng-model="user.senha" required="true" type="password">
+        </label>
+      </ion-list>
+      <label class="item item-input" id="cadastro-input6">
+      <input placeholder="Confirmar Senha" required="true" ng-model="senha" type="password">
+      </label>
+
+    </form>
+    <div class="spacer" style="height: 40px;"></div>
+    <a id="cadastro-button4" class="button button-balanced button-block" ng-click="salvarFunc(senha)" ng-disabled="formCadastro.$invalid" ng-click="">Criar</a>
+  </ion-content>
+</ion-view>
