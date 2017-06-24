@@ -14,7 +14,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
 
     $ionicCloudProvider.init({
       "core": {
-        "app_id": "ff76a9c5"
+        "app_id": ""
       }
     });
 
