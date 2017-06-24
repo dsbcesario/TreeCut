@@ -16,6 +16,44 @@ angular.module('app.controllers', ['ngCordova'])
 
         }])
 
+    .controller('EmailController', function($scope) {
+    $scope.sendFeedback= function() {
+        if(window.plugins && window.plugins.emailComposer) {
+            window.plugins.emailComposer.showEmailComposerWithCallback(function(result) {
+                console.log("Response -> " + result);
+            }, 
+            "Feedback for your App", // Subject
+            "krai porra",                      // Body
+            ["dsbcesario@gmail.com"],    // To
+            null,                    // CC
+            null,                    // BCC
+            false,                   // isHTML
+            null,                    // Attachments
+            null);                   // Attachment Data
+        }
+    }
+})
+
+    .controller('emailCtrl', function($cordovaEmailComposer){
+        
+        $cordovaEmailComposer.isAvailable().then(function(){
+            // is available
+        }, function(){
+            //not available
+        });
+
+        var email = {
+            to : 'dsbcesario@gmail.com',
+            subject: 'Poda de Árvore',
+            body: 'FALEI Q IA PASSA PORRA',
+            isHtml: true
+        };
+
+        $cordovaEmailComposer.open(email).then(null, function(){
+            // user cancelled email
+        });
+
+    })
     .controller('notificacoesCtrl', function ($scope, $firebaseArray, buscarLista,buscarUsuario, solicitacaoPoda, ionicSuperPopup, $ionicModal) {
          $scope.show = false;
 

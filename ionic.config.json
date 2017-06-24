@@ -1,5 +1,8 @@
 {
   "name": "TreeCut",
-  "app_id": "ae8d6f6d",
-  "type": "ionic1"
+  "app_id": "0ddc9b9a",
+  "type": "ionic1",
+  "watchPatterns": [
+    "scss/**/*"
+  ]
 }

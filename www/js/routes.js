@@ -36,7 +36,7 @@ angular.module('app.routes', [])
     views: {
       'tab3': {
         templateUrl: 'templates/notificacoes.html',
-        controller: 'notificacoesCtrl'
+        
       }
     }
   })
