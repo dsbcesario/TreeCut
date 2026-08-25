@@ -1,0 +1,42 @@
+<ion-modal-view id="page18" ng-model="detalhesModal">
+    <ion-header-bar class="bar bar-header bar-balanced">
+        <h1 class="title">Detalhes</h1>
+        <button class="button button-clear button-primary" ng-click="modal.hide()">Fechar</button>
+    </ion-header-bar>
+    <ion-content class="padding">
+
+        <div class="list card">
+
+            <h4 class="balanced padding-left">Solicitação:</h4>
+
+
+            <div class="item item-body">
+                <img style="width: 70%; height: 50%; margin-left: auto; margin-right: auto; display: block;" src="{{detalhesModal.img}}">
+                
+                <h3 class="padding-left">{{detalhesModal.endereco}}</h3>
+                
+                <p class="padding-left">{{detalhesModal.detalhes}}</p>
+
+            <div ng-show="show">    
+                <label class="item item-input item-select">
+                    <div class="input-label">
+                        Funcionário
+                    </div>
+                    <select>
+                        <option value="0" selected>Fulano</option>
+                        <option value="1">Ciclano</option>
+                    </select>
+                </label>
+           <div>     
+
+                <div>
+                    <a class="button button-positive button-block icon-left ion-checkmark-circled">Aprovar Solicitação</a>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </ion-content>
+</ion-modal-view>
