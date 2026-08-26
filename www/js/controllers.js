@@ -31,6 +31,28 @@ angular.module('app.controllers', ['ngCordova'])
 })
 
 .controller('notificacoesCtrl', function ($scope, $firebaseArray, buscarUsuario, solicitacaoPoda, ionicSuperPopup, $ionicModal) {
+  $scope.userDados = {};
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (!user) return;
+      firebase.database().ref('user/' + user.uid).once('value').then(function (snap) {
+    $scope.userDados = snap.val() || {};
+      if (!$scope.$$phase) $scope.$digest();
+    });
+  });
+  $scope.solicitacao = { endereco: '', detalhes: '' };
+  $scope.enviarSolicitacao = function () {
+    const user = firebase.auth().currentUser;
+    if (!user) { ionicSuperPopup.show('Erro!', 'Faça login primeiro!', 'error'); return; }
+    const obj = angular.copy($scope.userDados);
+    obj.uid = user.uid;
+    obj.email = user.email;
+    obj.enderecoArvore = $scope.solicitacao.endereco;
+    obj.detalhes = $scope.solicitacao.detalhes;
+    obj.data = Date.now();
+    solicitacaoPoda.createSolicitacao(obj).then(function () {
+      ionicSuperPopup.show('Feito!', 'Solicitação enviada com sucesso!', 'success');
+    });
+  };
   $scope.show = false;
   buscarUsuario.get().then(function (data) {
     if (data === true) $scope.show = true;
@@ -184,7 +206,17 @@ angular.module('app.controllers', ['ngCordova'])
 })
 
 .controller('cadastroCtrl', function ($scope, $state, $ionicLoading, ionicSuperPopup, userService) {
-  $scope.user = { email: "", nome: "", cidade: "" };
+  $scope.user = { 
+    email: "", 
+    nome: "", 
+    cidade: "", 
+    cpf: "", 
+    endereco: "", 
+    numero: "", 
+    bairro: "", 
+    cep: "", 
+    telefone: "" 
+  };
   $scope.tipo = { status: "" };
   $scope.lista = [
     { id: 1, cidade: 'São José do Rio Preto' },
@@ -213,12 +245,13 @@ angular.module('app.controllers', ['ngCordova'])
         if ($scope.tipo.status == 1) return userService.createAdmin();
       })
       .then(function () {
-        ionicSuperPopup.show('Bem Vindo!', 'Cadastrado com sucesso.', 'success');
-        if ($scope.tipo.status == 1) {
-          $state.go('tabsController.notificacoes');
-        } else {
-          $state.go('tabsController.camera');
-        }
+      ionicSuperPopup.show('Bem Vindo!', 'Cadastrado com sucesso.', 'success');
+      // Sai da conta recém-criada (o cadastro já loga automaticamente)
+        return firebase.auth().signOut();
+      })
+      .then(function () {
+      // Volta para a tela de login
+        $state.go('login');
       })
       .catch(function (error) {
         $ionicLoading.hide();
