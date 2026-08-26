@@ -24,7 +24,7 @@
           <label class="balanced titulo-negrito">Nome Completo*</label>
           <div class="marrom">Este campo deverá ser preenchido com o nome do interessado responsável pelo imóvel</div>
           <label class="item item-input">
-            <input placeholder="Insira seu Nome Completo" type="text">
+            <input placeholder="Insira seu Nome Completo" ng-model="userDados.nome">
           </label>
         </div>
 
@@ -32,7 +32,7 @@
           <label class="balanced titulo-negrito">CPF*</label>
           <div class="marrom">Número do documento do interessado responsável pelo imóvel (Digitar APENAS Números, sem pontos ou barra)</div>
           <label class="item item-input">
-            <input placeholder="Insira o numero do CPF" type="text">
+            <input placeholder="Insira o numero do CPF" ng-model="userDados.cpf">
           </label>
         </div>
 
@@ -54,28 +54,28 @@
         <div class="list card padding-box">
           <label class="balanced titulo-negrito">Endereço (para correspondência)*</label>
           <label class="item item-input">
-            <input placeholder="Insira a rua ou avenida" type="text">
+            <input placeholder="Insira a rua ou avenida" ng-model="userDados.endereco">
           </label>
         </div>
 
         <div class="list card padding-box">
           <label class="balanced titulo-negrito">Nº (correspondência)*</label>
           <label class="item item-input">
-            <input placeholder="Insira o numero da casa" type="text">
+            <input placeholder="Insira o numero da casa" ng-model="userDados.numero">
           </label>
         </div>
 
         <div class="list card padding-box">
           <label class="balanced titulo-negrito">Bairro (correspondência)*</label>
           <label class="item item-input">
-            <input placeholder="Insira o bairro" type="text">
+            <input placeholder="Insira o bairro" ng-model="userDados.bairro">
           </label>
         </div>
 
         <div class="list card padding-box">
           <label class="balanced titulo-negrito">Cidade*</label>
           <label class="item item-input">
-            <input placeholder="Insira a cidade" type="text">
+            <input placeholder="Insira a cidade" ng-model="userDados.cidade">
           </label>
         </div>
 
@@ -83,15 +83,14 @@
           <label class="balanced titulo-negrito">CEP*</label>
           <div class="marrom">Digitar Apenas Números (Região de S.J. Rio Preto)</div>
           <label class="item item-input">
-            <input placeholder="Insira seu CEP" type="text">
+            <input placeholder="Insira seu CEP" ng-model="userDados.cep">
           </label>
         </div>
 
         <div class="list card padding-box">
           <label class="balanced titulo-negrito">Telefone (fixo ou celular)*</label>
-          <div class="marrom">Digitar APENAS Números (SEM DD, Pontos ou Traços)</div>
           <label class="item item-input">
-            <input placeholder="Insira seu Telefone" type="text">
+            <input placeholder="Insira seu Telefone" ng-model="userDados.telefone">
           </label>
         </div>
 
@@ -3824,7 +3823,7 @@
           <label class="balanced titulo-negrito">EMAIL 1*</label>
           <div class="marrom">Neste campo deverá ser informado o email na qual será enviado o número de protocolo. A Secretaria do Meio Ambiente NÃO SE RESPONSABILIZA pelo fornecimento de INFORMAÇÕES ERRADAS e(ou) IMPRECISAS por parte do solicitante.</div>
           <label class="item item-input">
-            <input placeholder="Insira o email" type="text">
+            <input placeholder="Insira o email" ng-model="userDados.email">
           </label>
         </div>
         
