@@ -6,7 +6,7 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'ngCordova', 'ionic.cloud', 'cera.ionicSuperPopup', 'firebase'])
-
+//funcao que nao sei para que serve
   .config(function ($ionicConfigProvider, $sceDelegateProvider, $ionicCloudProvider) {
 
 
