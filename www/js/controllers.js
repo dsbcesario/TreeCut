@@ -1,5 +1,5 @@
 angular.module('app.controllers', ['ngCordova'])
-
+//mesma coisa para que serve?
 .controller('localizacaoCtrl', ['$scope', '$stateParams', function ($scope, $stateParams) { }])
 
 .controller('EmailController', function ($scope) {
