@@ -1,6 +1,5 @@
 /* Empty. Add your own CSS if you like */
 
-
 map {
   display: block;
   width: 100%;
@@ -10,8 +9,6 @@ map {
 .scroll-content{
     overflow: auto;
 }
-
-
 
 .scroll {
   height: 100%;
@@ -102,4 +99,109 @@ map {
 .profile-name { 
   font-weight: bold !important;
   text-transform: capitalize;    
+}
+
+/* ===== LOGIN — card centralizado, cores do app (verde #33cd5f e marrom #7f5a48) ===== */
+
+.login-bg {
+  background: #fff;
+}
+
+.login-card {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.login-brand img {
+  width: 140px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.login-input {
+  border: 1px solid #dadce0 !important;
+  border-radius: 8px;
+  margin-bottom: 0.9rem;
+  padding: 0 0.8rem !important;
+  min-height: 48px;
+  box-shadow: none !important;
+  background: #fff !important;
+}
+.login-input input {
+  font-size: 0.95rem;
+  color: #202124;
+}
+
+/* Botão Entrar — verde de fundo, letras marrom, texto MAIOR e MAIS GROSSO */
+.login-btn {
+  background: #33cd5f !important;
+  color: #7f5a48 !important;
+  border: 1px solid #33cd5f !important;
+  border-radius: 8px;
+  font-size: 1rem;          
+  font-weight: 800;            /* mais grosso */
+  min-height: 52px;
+  width: 100%;
+  letter-spacing: 0.5px;
+}
+
+/* Esqueceu a senha? — abaixo do botão Entrar, texto simples */
+.login-forgot {
+  display: block;
+  text-align: center;
+  color: #7f5a48;
+  font-size: 0.85rem;
+  text-decoration: none;
+  margin-top: 1rem;
+}
+
+/* Divisor "ou" — linha mais evidente (grossa e marrom) */
+.login-divider {
+  text-align: center;
+  margin: 1.6rem 0 1.2rem;
+  color: #7f5a48;
+  font-size: 0.9rem;
+  font-weight: 700;
+  position: relative;
+}
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 3px;                 /* linha grossa */
+  background: #7f5a48;         /* marrom */
+  border-radius: 2px;
+}
+.login-divider::before { left: 0; }
+.login-divider::after { right: 0; }
+
+/* Botão Criar conta — fundo branco, contorno GROSSO marrom, letras GROSSAS verdes */
+.login-btn-outline {
+  background: #fff !important;
+  border: 3px solid #7f5a48 !important;   /* contorno grosso marrom */
+  color: #33cd5f !important;             /* letras verdes */
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 800;                       /* letras grossas */
+  min-height: 52px;
+  width: 100%;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 480px) {
+  .login-brand img { width: 120px; }
+  .login-card { padding: 2rem 1.2rem; }
+  .login-btn { font-size: 1.1rem; }
+  .login-btn-outline { font-size: 1rem; }
 }

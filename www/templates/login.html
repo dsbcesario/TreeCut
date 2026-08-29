@@ -1,33 +1,34 @@
 <ion-view title="" id="page5">
 
-  <ion-content padding="true" scroll="true" class="has-header">
-    <form id="login-form1" class="list" ng-submit="entrar()">
-      <div class="spacer" style="width: 300px; height: 50px;"></div>
-      <div>
-        <img src="img/logo.png" style="display: block; width: 80%; height: auto; margin-left: auto; margin-right: auto;">
+  <ion-content scroll="true" class="has-header login-bg">
+    <div class="login-card">
+
+      <div class="login-brand">
+        <img src="img/logo.png" alt="TreeCut">
       </div>
-      <div class="spacer" style="width: 300px; height: 40px;"></div>
 
-      <ion-list id="login-list1">
-        <label class="item item-input" id="login-input1">
-          <input placeholder="E-mail" required="true" ng-model="user.email" type="email">
+      <form id="login-form1" class="login-form" ng-submit="entrar()">
+
+        <label class="item item-input login-input">
+          <input type="email" placeholder="E-mail" required="true" ng-model="user.email">
         </label>
-        <label class="item item-input" id="login-input2">
-          <input placeholder="Senha" required="true" ng-model="user.password" type="password">
+
+        <label class="item item-input login-input">
+          <input type="password" placeholder="Senha" required="true" ng-model="user.password">
         </label>
-      </ion-list>
 
-      <div class="spacer" style="width: 300px; height: 20px;"></div>
+        <button id="login-button1" class="button login-btn" type="submit">
+          Entrar
+        </button>
 
-      <button id="login-button1" class="button button-balanced button-block" type="submit">
-        Entrar
-      </button>
+        <a class="login-forgot" ui-sref="esqueciSenha">Esqueceu a senha?</a>
 
-      <div class="spacer" style="height: 15px;"></div>
+      </form>
 
-      <a ui-sref="cadastro" class="button button-clear button-positive button-block">
-        Não tem conta? Cadastre-se
-      </a>
-    </form>
+      <div class="login-divider"><span>ou</span></div>
+
+      <button class="button login-btn-outline" ui-sref="cadastro">Criar conta</button>
+
+    </div>
   </ion-content>
 </ion-view>
