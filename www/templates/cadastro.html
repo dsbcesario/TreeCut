@@ -1,96 +1,83 @@
 <ion-view title="Cadastro" id="page6">
 
-  <ion-content padding="true" scroll="true" class="has-header">
-    <form name="formCadastro" class="list" ng-submit="Cadastrar(username, senha)">
+  <ion-content scroll="true" class="has-header login-bg">
+    <div class="login-card">
 
-      <div class="item item-divider">Dados pessoais</div>
+      <div class="login-brand">
+        <img src="img/logo.png" alt="TreeCut">
+      </div>
 
-      <label class="item item-input">
-        <span class="input-label">Nome completo</span>
-        <input type="text" placeholder="Seu nome" required="true" ng-model="username">
-      </label>
+      <form name="formCadastro" class="list" ng-submit="Cadastrar(username, senha)">
 
-      <label class="item item-input">
-        <span class="input-label">CPF</span>
-        <input type="text" placeholder="000.000.000-00" required="true" ng-model="user.cpf">
-      </label>
+        <div class="item item-divider cadastro-divider">Dados pessoais</div>
 
-      <label class="item item-input">
-        <span class="input-label">Endereço</span>
-        <input type="text" placeholder="Rua, avenida..." required="true" ng-model="user.endereco">
-      </label>
+        <label class="item item-input login-input">
+          <input type="text" placeholder="Nome completo" required="true" ng-model="username">
+        </label>
 
-      <ion-grid>
-        <ion-row>
-          <ion-col width="40">
-            <label class="item item-input">
-              <span class="input-label">Nº</span>
-              <input type="text" placeholder="123" required="true" ng-model="user.numero">
-            </label>
-          </ion-col>
-          <ion-col width="60">
-            <label class="item item-input">
-              <span class="input-label">Bairro</span>
-              <input type="text" placeholder="Bairro" required="true" ng-model="user.bairro">
-            </label>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+        <label class="item item-input login-input">
+          <input type="text" placeholder="CPF" required="true" ng-model="user.cpf">
+        </label>
 
-      <ion-grid>
-        <ion-row>
-          <ion-col width="60">
-            <label class="item item-input">
-              <span class="input-label">Cidade</span>
-              <select ng-model="user.cidade">
-                <option value="{{array.cidade}}" ng-repeat="array in lista">{{array.cidade}}</option>
-              </select>
-            </label>
-          </ion-col>
-          <ion-col width="40">
-            <label class="item item-input">
-              <span class="input-label">CEP</span>
-              <input type="text" placeholder="00000-000" required="true" ng-model="user.cep">
-            </label>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+        <label class="item item-input login-input">
+          <input type="text" placeholder="Endereço (correspondência)" required="true" ng-model="user.endereco">
+        </label>
 
-      <label class="item item-input">
-        <span class="input-label">Telefone</span>
-        <input type="tel" placeholder="(00) 00000-0000" required="true" ng-model="user.telefone">
-      </label>
+        <label class="item item-input login-input">
+          <input type="text" placeholder="Número (correspondência)" required="true" ng-model="user.numero">
+        </label>
 
-      <label class="item item-input item-select">
-        <div class="input-label">Tipo de cadastro</div>
-        <select ng-model="tipo.status">
-          <option value="0" selected>Solicitante</option>
-          <option value="1">Administrador</option>
-        </select>
-      </label>
+        <label class="item item-input login-input">
+          <input type="text" placeholder="Bairro (correspondência)" required="true" ng-model="user.bairro">
+        </label>
 
-      <div class="item item-divider">Acesso</div>
+        <label class="item item-input login-input">
+          <input type="text" placeholder="CEP" required="true" ng-model="user.cep">
+        </label>
 
-      <label class="item item-input">
-        <span class="input-label">E-mail</span>
-        <input type="email" placeholder="seu@email.com" required="true" ng-model="user.email">
-      </label>
+        <label class="item item-input login-input">
+          <input type="tel" placeholder="Telefone" required="true" ng-model="user.telefone">
+        </label>
 
-      <label class="item item-input">
-        <span class="input-label">Senha</span>
-        <input type="password" id="cadastro-input5" required="true" ng-model="senha1">
-      </label>
+        <label class="item item-input login-input item-select">
+          <div class="input-label">Cidade</div>
+          <select ng-model="user.cidade">
+            <option value="{{array.cidade}}" ng-repeat="array in lista">{{array.cidade}}</option>
+          </select>
+        </label>
 
-      <label class="item item-input">
-        <span class="input-label">Confirmar senha</span>
-        <input type="password" required="true" ng-model="senha">
-      </label>
+        <label class="item item-input login-input item-select">
+          <div class="input-label">Tipo de cadastro</div>
+          <select ng-model="tipo.status">
+            <option value="0" selected>Solicitante</option>
+            <option value="1">Administrador</option>
+          </select>
+        </label>
 
-      <div class="spacer" style="height: 1.5rem;"></div>
+        <div class="item item-divider cadastro-divider">Acesso</div>
 
-      <button id="cadastro-button4" class="button button-balanced button-block" type="submit" ng-disabled="formCadastro.$invalid">
-        Criar
-      </button>
-    </form>
+        <label class="item item-input login-input">
+          <input type="email" placeholder="E-mail" required="true" ng-model="user.email">
+        </label>
+
+        <label class="item item-input login-input">
+          <input type="password" id="cadastro-input5" placeholder="Senha" required="true" ng-model="senha1">
+        </label>
+
+        <label class="item item-input login-input">
+          <input type="password" placeholder="Confirmar senha" required="true" ng-model="senha">
+        </label>
+
+        <button id="cadastro-button4" class="button login-btn" type="submit" ng-disabled="formCadastro.$invalid">
+          Criar
+        </button>
+
+        <div class="login-link">
+          <a ui-sref="login">Já tem conta? Entrar</a>
+        </div>
+
+      </form>
+
+    </div>
   </ion-content>
 </ion-view>
