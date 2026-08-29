@@ -70,6 +70,12 @@ angular.module('app.routes', [])
       controller: 'alterarSenhaCtrl'
     })
 
+    .state('esqueciSenha', {
+      url: '/page8',
+      templateUrl: 'templates/esqueciSenha.html',
+      controller: 'esqueciSenhaCtrl'
+    })
+
     .state('gerenciarFuncionario', {
       url: '/page14',
       templateUrl: 'templates/gerenciarFuncionario.html',

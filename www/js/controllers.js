@@ -1,12 +1,15 @@
 angular.module('app.controllers', ['ngCordova'])
-//mesma coisa para que serve?
-.controller('localizacaoCtrl', ['$scope', '$stateParams', function ($scope, $stateParams) { }])
+
+.controller('localizacaoCtrl', ['$scope', '$stateParams', function ($scope, $stateParams) {
+}])
 
 .controller('EmailController', function ($scope) {
   $scope.sendFeedback = function () {
     if (window.plugins && window.plugins.emailComposer) {
       window.plugins.emailComposer.showEmailComposerWithCallback(
-        function (result) { console.log('Resposta -> ' + result); },
+        function (result) {
+          console.log('Resposta -> ' + result);
+        },
         'Feedback do app',
         'Escreva aqui sua mensagem',
         ['destinatario@email.com'],
@@ -34,15 +37,19 @@ angular.module('app.controllers', ['ngCordova'])
   $scope.userDados = {};
   firebase.auth().onAuthStateChanged(function (user) {
     if (!user) return;
-      firebase.database().ref('user/' + user.uid).once('value').then(function (snap) {
-    $scope.userDados = snap.val() || {};
+    firebase.database().ref('user/' + user.uid).once('value').then(function (snap) {
+      $scope.userDados = snap.val() || {};
       if (!$scope.$$phase) $scope.$digest();
     });
   });
+
   $scope.solicitacao = { endereco: '', detalhes: '' };
   $scope.enviarSolicitacao = function () {
     const user = firebase.auth().currentUser;
-    if (!user) { ionicSuperPopup.show('Erro!', 'Faça login primeiro!', 'error'); return; }
+    if (!user) {
+      ionicSuperPopup.show('Erro!', 'Faça login primeiro!', 'error');
+      return;
+    }
     const obj = angular.copy($scope.userDados);
     obj.uid = user.uid;
     obj.email = user.email;
@@ -53,6 +60,7 @@ angular.module('app.controllers', ['ngCordova'])
       ionicSuperPopup.show('Feito!', 'Solicitação enviada com sucesso!', 'success');
     });
   };
+
   $scope.show = false;
   buscarUsuario.get().then(function (data) {
     if (data === true) $scope.show = true;
@@ -83,16 +91,29 @@ angular.module('app.controllers', ['ngCordova'])
     });
   };
 
-  $ionicModal.fromTemplateUrl('templates/detalhesSolicitacao.html', { scope: $scope, animation: 'slide-in-up' }).then(function (modal) {
+  $ionicModal.fromTemplateUrl('templates/detalhesSolicitacao.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function (modal) {
     $scope.modal = modal;
   });
 
   $scope.openModal = function (array) {
     $scope.modal.show();
-    $scope.detalhesModal = { endereco: array.endereco, img: array.img, detalhes: array.detalhes };
+    $scope.detalhesModal = {
+      endereco: array.endereco,
+      img: array.img,
+      detalhes: array.detalhes
+    };
   };
-  $scope.closeModal = function () { $scope.modal.hide(); };
-  $scope.$on('$destroy', function () { $scope.modal.remove(); });
+
+  $scope.closeModal = function () {
+    $scope.modal.hide();
+  };
+
+  $scope.$on('$destroy', function () {
+    $scope.modal.remove();
+  });
 })
 
 .controller('configuracoesCtrl', function ($scope, $state, $cordovaCamera, buscarUsuario) {
@@ -140,7 +161,6 @@ angular.module('app.controllers', ['ngCordova'])
 .controller('cadastroFunc', function ($scope, gerenciarFunc) {
   const auth = firebase.auth().currentUser;
   $scope.user = { nome: '', senha: '', email: '', uidADM: auth ? auth.uid : '', auth: false };
-
   $scope.salvarFunc = function (senha) {
     if ($scope.user.senha == senha) {
       gerenciarFunc.pesquisarFunc($scope.user.email).then(function (func) {
@@ -164,11 +184,18 @@ angular.module('app.controllers', ['ngCordova'])
 })
 
 .controller('loginCtrl', function ($scope, $state, $ionicLoading, ionicSuperPopup, userService, gerenciarFunc) {
-  $scope.login = function () { $state.go('tabsController.notificacoes'); };
-  $scope.login1 = function () { $state.go('tabsController.camera'); };
-  $scope.login2 = function () { $state.go('tabsController.configuracoes'); };
+  $scope.login = function () {
+    $state.go('tabsController.notificacoes');
+  };
+  $scope.login1 = function () {
+    $state.go('tabsController.camera');
+  };
+  $scope.login2 = function () {
+    $state.go('tabsController.configuracoes');
+  };
 
   $scope.user = { email: '', password: '' };
+
   $scope.entrar = function () {
     if (!$scope.user.email || !$scope.user.password) {
       ionicSuperPopup.show('Aviso!', 'Preencha e-mail e senha!', 'warning');
@@ -206,17 +233,7 @@ angular.module('app.controllers', ['ngCordova'])
 })
 
 .controller('cadastroCtrl', function ($scope, $state, $ionicLoading, ionicSuperPopup, userService) {
-  $scope.user = { 
-    email: "", 
-    nome: "", 
-    cidade: "", 
-    cpf: "", 
-    endereco: "", 
-    numero: "", 
-    bairro: "", 
-    cep: "", 
-    telefone: "" 
-  };
+  $scope.user = { email: "", nome: "", cidade: "", cpf: "", endereco: "", numero: "", bairro: "", cep: "", telefone: "" };
   $scope.tipo = { status: "" };
   $scope.lista = [
     { id: 1, cidade: 'São José do Rio Preto' },
@@ -245,12 +262,10 @@ angular.module('app.controllers', ['ngCordova'])
         if ($scope.tipo.status == 1) return userService.createAdmin();
       })
       .then(function () {
-      ionicSuperPopup.show('Bem Vindo!', 'Cadastrado com sucesso.', 'success');
-      // Sai da conta recém-criada (o cadastro já loga automaticamente)
+        ionicSuperPopup.show('Bem Vindo!', 'Cadastrado com sucesso.', 'success');
         return firebase.auth().signOut();
       })
       .then(function () {
-      // Volta para a tela de login
         $state.go('login');
       })
       .catch(function (error) {
@@ -288,10 +303,31 @@ angular.module('app.controllers', ['ngCordova'])
   };
 })
 
+.controller('esqueciSenhaCtrl', function ($scope, $state, ionicSuperPopup) {
+  $scope.email = '';
+
+  $scope.enviar = function () {
+    if (!$scope.email) {
+      ionicSuperPopup.show('Aviso!', 'Informe seu e-mail!', 'warning');
+      return;
+    }
+    firebase.auth().sendPasswordResetEmail($scope.email)
+      .then(function () {
+        ionicSuperPopup.show('E-mail enviado!', 'Verifique sua caixa de entrada para redefinir a senha.', 'success');
+        $state.go('login');
+      })
+      .catch(function (error) {
+        const code = error.code;
+        if (code == 'auth/invalid-email') ionicSuperPopup.show('Erro!', 'E-mail inválido!', 'error');
+        else if (code == 'auth/user-not-found') ionicSuperPopup.show('Erro!', 'E-mail não cadastrado!', 'error');
+        else ionicSuperPopup.show('Erro!', error.message, 'error');
+      });
+  };
+})
+
 .controller('cadastrarFuncionarioCtrl', function ($scope, gerenciarFunc) {
   const auth = firebase.auth().currentUser;
   $scope.user = { nome: '', senha: '', email: '', uidADM: auth ? auth.uid : '', auth: false };
-
   $scope.salvarFunc = function (senha) {
     if ($scope.user.senha == senha) {
       gerenciarFunc.pesquisarFunc($scope.user.email).then(function (func) {
@@ -311,6 +347,7 @@ angular.module('app.controllers', ['ngCordova'])
   $scope.voltarLocalizacao = function () {
     $state.go('tabsController.localizacao');
   };
+
   $scope.camera = { cidade: $rootScope.formatted_address };
   $scope.pictureUrl = '../img/add_photo.png';
 
@@ -328,18 +365,24 @@ angular.module('app.controllers', ['ngCordova'])
     $scope.activeSlide = index;
     $scope.showModal('templates/imagemmodal.html');
   };
+
   $scope.showModal = function (templateUrl) {
-    $ionicModal.fromTemplateUrl(templateUrl, { scope: $scope, animation: 'slide-in-up' }).then(function (modal) {
+    $ionicModal.fromTemplateUrl(templateUrl, {
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function (modal) {
       $scope.modal = modal;
       $scope.modal.show();
     });
   };
+
   $scope.closeModal = function () {
     $scope.modal.hide();
     $scope.modal.remove();
   };
 
   $scope.obj = { detalhes: "" };
+
   $scope.salvar = function (cidade) {
     const user = firebase.auth().currentUser;
     if (!user) {
@@ -347,7 +390,12 @@ angular.module('app.controllers', ['ngCordova'])
       return;
     }
     $ionicLoading.show({ template: 'Carregando...', duration: 300 });
-    const obj = { endereco: cidade, img: $scope.pictureUrl, uid: user.uid, detalhes: $scope.obj.detalhes };
+    const obj = {
+      endereco: cidade,
+      img: $scope.pictureUrl,
+      uid: user.uid,
+      detalhes: $scope.obj.detalhes
+    };
     solicitacaoPoda.createSolicitacao(obj).then(function () {
       $ionicLoading.hide();
       ionicSuperPopup.show('Feito!', 'Solicitação enviada com sucesso!', 'success');
@@ -359,15 +407,23 @@ angular.module('app.controllers', ['ngCordova'])
 .controller('MapCtrl', function ($scope, $ionicLoading, $cordovaGeolocation, $rootScope, $state) {
   $ionicLoading.show({ template: 'Carregando...', duration: 300 });
 
-  $scope.mapCreated = function (map) { $scope.map = map; };
+  $scope.mapCreated = function (map) {
+    $scope.map = map;
+  };
 
   $scope.pegarLocalizacao = function () {
     $state.go('tabsController.camera');
   };
 
   $scope.centerOnMe = function () {
-    if (!$scope.map) { return; }
-    $scope.loading = $ionicLoading.show({ content: 'Capturando localização atual...', showBackdrop: false, duration: 3000 });
+    if (!$scope.map) {
+      return;
+    }
+    $scope.loading = $ionicLoading.show({
+      content: 'Capturando localização atual...',
+      showBackdrop: false,
+      duration: 3000
+    });
     navigator.geolocation.getCurrentPosition(function (pos) {
       $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
       $scope.loading.hide();

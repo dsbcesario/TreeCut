@@ -1,0 +1,28 @@
+<ion-view title="Esqueceu a senha" id="page7">
+
+  <ion-content scroll="true" class="has-header login-bg">
+    <div class="login-card">
+
+      <div class="login-brand">
+        <img src="img/logo.png" alt="TreeCut">
+        <p>Informe seu e-mail para receber o link de redefinição de senha</p>
+      </div>
+
+      <form name="formEsqueci" class="login-form" ng-submit="enviar()">
+
+        <label class="item item-input login-input">
+          <input type="email" placeholder="E-mail cadastrado" required="true" ng-model="email">
+        </label>
+
+        <button class="button login-btn" type="submit" ng-disabled="formEsqueci.$invalid">
+          Enviar link
+        </button>
+
+        <div class="login-link">
+          <a ui-sref="login">Voltar para o login</a>
+        </div>
+      </form>
+
+    </div>
+  </ion-content>
+</ion-view>
