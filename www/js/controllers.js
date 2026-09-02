@@ -33,17 +33,43 @@ angular.module('app.controllers', ['ngCordova'])
   });
 })
 
-.controller('notificacoesCtrl', function ($scope, $firebaseArray, buscarUsuario, solicitacaoPoda, ionicSuperPopup, $ionicModal) {
+.controller('notificacoesCtrl', function ($scope, $http, $firebaseArray, buscarUsuario, solicitacaoPoda, ionicSuperPopup, $ionicModal) {
   $scope.userDados = {};
   firebase.auth().onAuthStateChanged(function (user) {
     if (!user) return;
     firebase.database().ref('user/' + user.uid).once('value').then(function (snap) {
       $scope.userDados = snap.val() || {};
+      // Preenche o E-mail 1 com o e-mail do cadastro (se ainda estiver vazio)
+      if (!$scope.solicitacao.email1) {
+        $scope.solicitacao.email1 = $scope.userDados.email;
+      }
       if (!$scope.$$phase) $scope.$digest();
     });
   });
 
   $scope.solicitacao = { endereco: '', detalhes: '' };
+
+  // Busca o endereço pelo CEP (ViaCEP - gratuito, sem chave)
+  $scope.buscarCep = function () {
+    var cep = ($scope.solicitacao.cep || '').replace(/\D/g, '');
+    if (cep.length !== 8) return;
+    $http.get('https://viacep.com.br/ws/' + cep + '/json/')
+      .then(function (res) {
+        var d = res.data;
+        if (d.erro) {
+          ionicSuperPopup.show('Aviso!', 'CEP não encontrado. Preencha o endereço manualmente.', 'warning');
+          return;
+        }
+        $scope.solicitacao.endereco = d.logradouro;
+        $scope.solicitacao.bairro = d.bairro;
+        $scope.solicitacao.cidade = d.localidade;
+        $scope.solicitacao.uf = d.uf;
+      })
+      .catch(function () {
+        ionicSuperPopup.show('Erro!', 'Não foi possível consultar o CEP. Preencha manualmente.', 'error');
+      });
+  };
+
   $scope.enviarSolicitacao = function () {
     const user = firebase.auth().currentUser;
     if (!user) {
@@ -461,4 +487,20 @@ angular.module('app.controllers', ['ngCordova'])
       }
     });
   });
+})
+
+// Faz o textarea crescer sozinho conforme digita
+.directive('autoGrow', function () {
+  return {
+    restrict: 'A',
+    link: function (scope, element) {
+      function resize() {
+        element.css('height', 'auto');
+        element.css('height', element[0].scrollHeight + 'px');
+      }
+      element.on('input', resize);
+      scope.$watch(function () { return element.val(); }, resize);
+      setTimeout(resize, 0);
+    }
+  };
 });
