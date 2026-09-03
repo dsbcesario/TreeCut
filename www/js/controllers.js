@@ -33,13 +33,12 @@ angular.module('app.controllers', ['ngCordova'])
   });
 })
 
-.controller('notificacoesCtrl', function ($scope, $http, $firebaseArray, buscarUsuario, solicitacaoPoda, ionicSuperPopup, $ionicModal) {
+.controller('notificacoesCtrl', function ($scope, $http, $firebaseArray, buscarUsuario, solicitacaoPoda, ionicSuperPopup, $ionicModal, $ionicPopup) {
   $scope.userDados = {};
   firebase.auth().onAuthStateChanged(function (user) {
     if (!user) return;
     firebase.database().ref('user/' + user.uid).once('value').then(function (snap) {
       $scope.userDados = snap.val() || {};
-      // Preenche o E-mail 1 com o e-mail do cadastro (se ainda estiver vazio)
       if (!$scope.solicitacao.email1) {
         $scope.solicitacao.email1 = $scope.userDados.email;
       }
@@ -47,9 +46,33 @@ angular.module('app.controllers', ['ngCordova'])
     });
   });
 
-  $scope.solicitacao = { endereco: '', detalhes: '' };
+  $scope.solicitacao = {
+    endereco: '',
+    detalhes: '',
+    tipoPodador: 'aleatorio',
+    podador: null
+  };
 
-  // Busca o endereço pelo CEP (ViaCEP - gratuito, sem chave)
+  // Lista de podadores cadastrados
+  $scope.listaPodadores = [];
+  firebase.database().ref('podador').on('value', function (snap) {
+    $scope.listaPodadores = [];
+    var val = snap.val();
+    if (val) {
+      angular.forEach(val, function (v, k) {
+        var nome = (typeof v === 'string') ? v : (v.nome || v.razaoSocial || 'Podador');
+        $scope.listaPodadores.push({ $id: k, nome: nome });
+      });
+    }
+    if (!$scope.$$phase) $scope.$digest();
+  });
+
+  $scope.escolherPodador = function (tipo) {
+    $scope.solicitacao.tipoPodador = tipo;
+    if (tipo === 'aleatorio') $scope.solicitacao.podador = null;
+  };
+
+  // Busca o endereço pelo CEP
   $scope.buscarCep = function () {
     var cep = ($scope.solicitacao.cep || '').replace(/\D/g, '');
     if (cep.length !== 8) return;
@@ -76,14 +99,41 @@ angular.module('app.controllers', ['ngCordova'])
       ionicSuperPopup.show('Erro!', 'Faça login primeiro!', 'error');
       return;
     }
+    if ($scope.solicitacao.tipoPodador === 'especifico' && !$scope.solicitacao.podador) {
+      ionicSuperPopup.show('Aviso!', 'Selecione o podador para a solicitação!', 'warning');
+      return;
+    }
     const obj = angular.copy($scope.userDados);
     obj.uid = user.uid;
     obj.email = user.email;
     obj.enderecoArvore = $scope.solicitacao.endereco;
     obj.detalhes = $scope.solicitacao.detalhes;
+    obj.qtdArvores = $scope.solicitacao.qtdArvores;
+    obj.tipoPodador = $scope.solicitacao.tipoPodador || 'aleatorio';
+    obj.podador = ($scope.solicitacao.tipoPodador === 'especifico' && $scope.solicitacao.podador)
+      ? $scope.solicitacao.podador.nome
+      : null;
+    obj.status = 'analise';   // inicia em análise, aguardando podador
     obj.data = Date.now();
     solicitacaoPoda.createSolicitacao(obj).then(function () {
       ionicSuperPopup.show('Feito!', 'Solicitação enviada com sucesso!', 'success');
+    });
+  };
+
+  // ===== Excluir solicitação em aberto — com confirmação (ninguém pode recusar) =====
+  $scope.excluirAberta = function (chave) {
+    if (!chave) return;
+    $ionicPopup.confirm({
+      title: 'Excluir solicitação',
+      template: 'Tem certeza que deseja excluir esta solicitação?',
+      okText: 'Excluir',
+      okType: 'button-assertive',
+      cancelText: 'Cancelar'
+    }).then(function (res) {
+      if (!res) return;
+      firebase.database().ref('solicitacaoPoda/aberto/' + chave).remove().then(function () {
+        ionicSuperPopup.show('Excluída!', 'Solicitação excluída com sucesso!', 'success');
+      });
     });
   };
 
@@ -100,15 +150,6 @@ angular.module('app.controllers', ['ngCordova'])
     $scope.listaAberta = data.val() || {};
     if (!$scope.$$phase) $scope.$digest();
   });
-
-  $scope.moverRecusada = function (obj, id) {
-    const chave = id || (obj && obj.$id);
-    const dados = $scope.listaAberta[chave] || obj;
-    if (!dados || !chave) return;
-    solicitacaoPoda.moverRecusada(dados, chave).then(() => {
-      ionicSuperPopup.show('Aviso!', 'Solicitação recusada!', 'error');
-    });
-  };
 
   $scope.excluirRecusada = function (id) {
     if (!id) return;
