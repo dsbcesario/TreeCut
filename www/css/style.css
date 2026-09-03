@@ -553,3 +553,11 @@ map {
   min-height: 32px;
   line-height: 1;
 }
+
+/* ===== Logo TreeCut no topo de todas as páginas ===== */
+.nav-logo {
+  height: 36px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+}
