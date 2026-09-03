@@ -478,3 +478,78 @@ map {
   .notif-radio-block { flex: 1 1 100%; min-width: 0; }
   .notif-option { flex: 1 1 auto; }
 }
+
+/* Seleção do podador */
+.notif-select-podador {
+  flex: 1 1 100%;
+  min-width: 0 !important;
+}
+.notif-select-podador select {
+  width: 100%;
+  border: none !important;
+  background: transparent !important;
+  font-size: 0.95rem;
+  color: #202124;
+  padding: 8px 0;
+  text-align: left !important;
+}
+
+/* ===== Tag de status das solicitações em aberto ===== */
+.notif-tag {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin: 4px 0 6px;
+}
+.notif-tag-analise {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffe69c;
+}
+.notif-tag-aceita {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* ===== Item de solicitação em aberto — layout corrigido ===== */
+.notif-item {
+  padding: 14px 16px !important;
+}
+
+/* Linha do cabeçalho: endereço à esquerda + status à direita */
+.notif-item-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.notif-item-head .notif-item-title {
+  margin: 0 !important;
+}
+
+.notif-item-head .notif-tag {
+  margin: 0 !important;
+}
+
+.notif-detalhes {
+  color: #555;
+  font-size: 0.9rem;
+  margin: 0 0 4px !important;
+}
+
+/* Botão Excluir: fica abaixo do conteúdo, alinhado à esquerda (não vai ao canto) */
+.notif-excluir-btn {
+  display: inline-block !important;
+  width: auto !important;
+  position: static !important;      /* desfaz o posicionamento à direita do Ionic */
+  margin: 10px 0 0 !important;
+  min-height: 32px;
+  line-height: 1;
+}
