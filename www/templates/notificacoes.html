@@ -87,7 +87,7 @@
         <p class="notif-hint">Digite o CEP e o endereço será preenchido automaticamente. Se preferir, digite na mão.</p>
       </div>
 
-      <!-- ===== Dados do imóvel (cada pergunta em bloco separado) ===== -->
+      <!-- ===== Dados do imóvel ===== -->
       <div class="list card notif-card">
         <div class="item item-divider notif-divider">Dados do imóvel</div>
 
@@ -132,7 +132,7 @@
         </div>
       </div>
 
-      <!-- ===== Detalhes da poda (quantidade digitada + motivo com auto-crescimento) ===== -->
+      <!-- ===== Detalhes da poda ===== -->
       <div class="list card notif-card">
         <div class="item item-divider notif-divider">Detalhes da poda</div>
 
@@ -141,7 +141,30 @@
             <span class="input-label">Quantidade de árvore(s)*:</span>
             <input type="number" ng-model="solicitacao.qtdArvores" min="1" max="99" placeholder="Ex.: 2">
           </label>
+        </div>
 
+        <!-- Escolha do podador -->
+        <div class="notif-radio-group">
+          <div class="notif-radio-block">
+            <p class="notif-question">Como deseja enviar a solicitação?*</p>
+            <div class="notif-options">
+              <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoPodador === 'aleatorio'}" ng-click="escolherPodador('aleatorio')">Aleatório</button>
+              <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoPodador === 'especifico'}" ng-click="escolherPodador('especifico')">Escolher podador</button>
+            </div>
+          </div>
+
+          <div class="notif-radio-block" ng-if="solicitacao.tipoPodador === 'especifico'">
+            <p class="notif-question">Selecione o podador:*</p>
+            <div class="item item-input notif-input notif-select-podador">
+              <select ng-model="solicitacao.podador" ng-options="p.nome for p in listaPodadores track by p.$id">
+                <option value="">Selecione um podador...</option>
+              </select>
+            </div>
+            <p class="notif-hint" ng-if="!listaPodadores.length">Nenhum podador cadastrado no momento.</p>
+          </div>
+        </div>
+
+        <div class="notif-grid">
           <label class="item item-input notif-input notif-full">
             <span class="input-label">Justifique o motivo da poda*:</span>
             <textarea auto-grow ng-model="solicitacao.detalhes" placeholder="Descreva o motivo..."></textarea>
@@ -179,14 +202,22 @@
         </button>
       </div>
 
-      <!-- ===== Minhas solicitações (abertas) ===== -->
+      <!-- ===== Minhas solicitações (abertas) — tag junto ao título + Excluir abaixo ===== -->
       <div class="list card notif-card" ng-if="listaAberta">
         <div class="item item-divider notif-divider">Solicitações em aberto</div>
         <div class="item notif-item" ng-repeat="(key, item) in listaAberta">
-          <h2 class="notif-item-title">{{item.enderecoArvore || item.endereco}}</h2>
-          <p>{{item.detalhes}}</p>
+
+          <div class="notif-item-head">
+            <h2 class="notif-item-title">{{item.enderecoArvore || item.endereco}}</h2>
+            <span class="notif-tag" ng-class="item.status === 'aceita' ? 'notif-tag-aceita' : 'notif-tag-analise'">
+              {{item.status === 'aceita' ? 'Aceita' : 'Análise'}}
+            </span>
+          </div>
+
+          <p class="notif-detalhes">{{item.detalhes}}</p>
           <p class="notif-date">{{item.data | date:'dd/MM/yyyy HH:mm'}}</p>
-          <button class="button button-small notif-btn-danger" ng-click="moverRecusada(item, key)">Recusar</button>
+
+          <button class="button button-small notif-btn-danger notif-excluir-btn" ng-click="excluirAberta(key)">Excluir</button>
         </div>
       </div>
 
