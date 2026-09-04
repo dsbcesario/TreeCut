@@ -35,23 +35,60 @@ angular.module('app.controllers', ['ngCordova'])
 
 .controller('notificacoesCtrl', function ($scope, $http, $firebaseArray, buscarUsuario, solicitacaoPoda, ionicSuperPopup, $ionicModal, $ionicPopup) {
   $scope.userDados = {};
-  firebase.auth().onAuthStateChanged(function (user) {
-    if (!user) return;
-    firebase.database().ref('user/' + user.uid).once('value').then(function (snap) {
-      $scope.userDados = snap.val() || {};
-      if (!$scope.solicitacao.email1) {
-        $scope.solicitacao.email1 = $scope.userDados.email;
-      }
-      if (!$scope.$$phase) $scope.$digest();
-    });
-  });
-
+  $scope.currentUid = null;
   $scope.solicitacao = {
     endereco: '',
     detalhes: '',
     tipoPodador: 'aleatorio',
     podador: null
   };
+
+  // ===== Carrega os dados do usuário logado =====
+  function carregarUsuario(user) {
+    $scope.currentUid = user.uid;
+    firebase.database().ref('user/' + user.uid).once('value').then(function (snap) {
+      $scope.userDados = snap.val() || {};
+      // Preenche o E-mail 1 com o e-mail do cadastro (se ainda estiver vazio)
+      if (!$scope.solicitacao.email1) {
+        $scope.solicitacao.email1 = $scope.userDados.email;
+      }
+      if (!$scope.$$phase) $scope.$digest();
+    });
+  }
+
+  // ===== Carrega SOMENTE as solicitações do usuário logado =====
+  function carregarSolicitacoes() {
+    $scope.listaAberta = {};   // limpa a lista antiga (OUTRA conta)
+    firebase.database().ref('solicitacaoPoda/aberto').on('value', function (data) {
+      var todas = data.val() || {};
+      var minhas = {};
+      angular.forEach(todas, function (v, k) {
+        if (v.uid === $scope.currentUid) {
+          minhas[k] = v;
+        }
+      });
+      $scope.listaAberta = minhas;
+      if (!$scope.$$phase) $scope.$digest();
+    });
+  }
+
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (!user) {
+      $scope.listaAberta = {};
+      return;
+    }
+    carregarUsuario(user);
+    carregarSolicitacoes();
+  });
+
+  // ===== Recarrega sempre que a tela for exibida (mata a view em cache) =====
+  $scope.$on('$ionicView.beforeEnter', function () {
+    var user = firebase.auth().currentUser;
+    if (user) {
+      carregarUsuario(user);
+      carregarSolicitacoes();
+    }
+  });
 
   // Lista de podadores cadastrados
   $scope.listaPodadores = [];
@@ -113,14 +150,15 @@ angular.module('app.controllers', ['ngCordova'])
     obj.podador = ($scope.solicitacao.tipoPodador === 'especifico' && $scope.solicitacao.podador)
       ? $scope.solicitacao.podador.nome
       : null;
-    obj.status = 'analise';   // inicia em análise, aguardando podador
+    obj.status = 'analise';
     obj.data = Date.now();
     solicitacaoPoda.createSolicitacao(obj).then(function () {
       ionicSuperPopup.show('Feito!', 'Solicitação enviada com sucesso!', 'success');
+      $scope.solicitacao.detalhes = '';
     });
   };
 
-  // ===== Excluir solicitação em aberto — com confirmação (ninguém pode recusar) =====
+  // ===== Excluir solicitação em aberto — com confirmação =====
   $scope.excluirAberta = function (chave) {
     if (!chave) return;
     $ionicPopup.confirm({
@@ -144,12 +182,6 @@ angular.module('app.controllers', ['ngCordova'])
 
   const ref = firebase.database().ref('notifications');
   $scope.notifications = $firebaseArray(ref);
-
-  $scope.listaAberta = {};
-  firebase.database().ref('solicitacaoPoda/aberto').on('value', (data) => {
-    $scope.listaAberta = data.val() || {};
-    if (!$scope.$$phase) $scope.$digest();
-  });
 
   $scope.excluirRecusada = function (id) {
     if (!id) return;
@@ -180,6 +212,7 @@ angular.module('app.controllers', ['ngCordova'])
 
   $scope.$on('$destroy', function () {
     $scope.modal.remove();
+    firebase.database().ref('solicitacaoPoda/aberto').off('value');
   });
 })
 
