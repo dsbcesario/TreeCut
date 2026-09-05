@@ -1,0 +1,16 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-balanced">
+    <h1 class="title">Sua localização</h1>
+    <button class="button button-clear button-white" ng-click="fecharMapa()">Fechar</button>
+  </ion-header-bar>
+
+  <ion-content scroll="false" class="mapa-content">
+    <div id="mapa-denuncia" class="mapa-modal"></div>
+  </ion-content>
+
+  <div class="bar bar-footer notif-map-footer">
+    <button class="button button-block notif-btn notif-map-btn" ng-click="usarEnderecoMapa()">
+      Usar este endereço
+    </button>
+  </div>
+</ion-modal-view>
