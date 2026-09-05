@@ -1,62 +1,105 @@
 <ion-view title="Denúncia" id="page2" ng-controller="CameraCtrl">
-  <ion-content padding="true" scroll="true" class="has-header">
+  <ion-content scroll="true" class="has-header notif-bg">
+    <div class="notif-container">
 
-    <div class="list card">
-      
-    <label class="balanced padding-left">Inserir uma foto</label>
-    
-    <div class="row">
-      <div class="col-33"></div>
-      <div class="col-33" col-center>
-        
-        
-          
-          <div class="item item-image" ng-click="showImages($index)">
+      <!-- ===== Foto da denúncia ===== -->
+      <div class="list card notif-card">
+        <div class="item item-divider notif-divider">Foto da denúncia</div>
+        <div class="item item-text-wrap notif-info">
+          <p>Tire uma foto com a câmera ou escolha uma imagem da galeria. Toque na foto para ampliar.</p>
+        </div>
 
-            <img ng-src="{{pictureUrl}}" class="image-list-thumb"/>
+        <div class="notif-camera-preview">
+          <img ng-src="{{pictureUrl}}" class="notif-camera-img" ng-click="showImages($index)">
+        </div>
 
-          </div>
-        
+        <div class="notif-options notif-camera-actions">
+          <button type="button" class="notif-option" ng-click="fotografar()">Tirar foto</button>
+          <button type="button" class="notif-option" ng-click="abrirGaleria()">Escolher da galeria</button>
+        </div>
       </div>
-    </div>
-    
-    <a id="camera-button" ng-click="fotografar()" class="ion-button ion-item item-right button-right round icon-only icon-right button-large ion-camera"></a>
-      
-    </div>
 
+      <!-- ===== Localização ===== -->
+      <div class="list card notif-card">
+        <div class="item item-divider notif-divider">Localização</div>
+        <div class="item item-text-wrap notif-info">
+          <p>Use sua localização atual no mapa ou preencha o endereço manualmente (o CEP preenche o resto).</p>
+        </div>
 
+        <div class="notif-grid">
+          <label class="item item-input notif-input">
+            <span class="input-label">CEP:</span>
+            <input type="text" ng-model="denuncia.cep" ng-change="buscarCep()" placeholder="00000-000" maxlength="9">
+          </label>
 
-    <div class="list card">
-    <label class="balanced padding-left">Adicionar o endereço</label>
-      <div>       
-        <label class="item item-input" id="login-input1">
-          <textarea placeholder="Clique no pin e adicione sua localização atual." ng-model="camera.cidade" ng-disabled="true" type="text">
-          </textarea>
-        </label>
+          <label class="item item-input notif-input">
+            <span class="input-label">Nº:</span>
+            <input type="text" ng-model="denuncia.numero" placeholder="123">
+          </label>
 
-     </div>
-     <div>     
-     <a id="camera-button" class="ion-button icon-only icon-right button-large ion-android-pin" ng-click="voltarLocalizacao()"></a>
-   </div>
-     </div>
+          <label class="item item-input notif-input notif-full">
+            <span class="input-label">Rua*:</span>
+            <input type="text" ng-model="denuncia.endereco" placeholder="Digite o nome da rua">
+          </label>
 
+          <label class="item item-input notif-input">
+            <span class="input-label">Bairro:</span>
+            <input type="text" ng-model="denuncia.bairro" placeholder="Bairro">
+          </label>
 
+          <label class="item item-input notif-input">
+            <span class="input-label">Cidade:</span>
+            <input type="text" ng-model="denuncia.cidade" placeholder="Cidade">
+          </label>
 
+          <label class="item item-input notif-input">
+            <span class="input-label">UF:</span>
+            <input type="text" ng-model="denuncia.uf" placeholder="SP">
+          </label>
+        </div>
 
-    <div class="list card">
-      
-    
-      <label class="balanced padding-left">Descrição</label>
-      
-      <label class="item item-input">
-        <textarea placeholder="Insira uma breve descrição." ng-model="obj.detalhes" class="textareas"> </textarea>
-        </label>
-    
-    </div>
-
-    
-      <div>
-        <a class="button button-positive button-block icon-left ion-paper-airplane" ng-click="salvar(camera.cidade)">Enviar Denúncia</a>
+        <div class="notif-options notif-camera-actions">
+          <button type="button" class="notif-option notif-option-location" ng-click="voltarLocalizacao()">
+            📍 Localização atual
+          </button>
+        </div>
+        <p class="notif-hint">Digite o CEP e o endereço é preenchido automaticamente, ou toque em "Localização atual" para marcar no mapa.</p>
       </div>
+
+      <!-- ===== MAPA INLINE (aparece ao tocar em "Localização atual") ===== -->
+      <div class="list card notif-card" ng-show="mostrarMapa">
+        <div class="item item-divider notif-divider">Marque o local no mapa</div>
+
+        <div class="item item-text-wrap notif-info">
+          <p>Arraste o marcador até o local da denúncia e toque em "Usar este endereço".</p>
+        </div>
+
+        <div id="mapa-denuncia" class="mapa-inline"></div>
+
+        <div class="notif-grid">
+          <button type="button" class="notif-option notif-option-location" ng-click="usarEnderecoMapa()">Usar este endereço</button>
+          <button type="button" class="notif-option" ng-click="fecharMapa()">Fechar mapa</button>
+        </div>
+      </div>
+
+      <!-- ===== Descrição ===== -->
+      <div class="list card notif-card">
+        <div class="item item-divider notif-divider">Descrição</div>
+        <div class="notif-grid">
+          <label class="item item-input notif-input notif-full">
+            <span class="input-label">Descreva a denúncia*:</span>
+            <textarea auto-grow ng-model="obj.detalhes" placeholder="Insira uma breve descrição..."></textarea>
+          </label>
+        </div>
+      </div>
+
+      <!-- ===== Enviar ===== -->
+      <div class="list card notif-card">
+        <button class="button button-block notif-btn" ng-click="salvar()">
+          Enviar Denúncia
+        </button>
+      </div>
+
+    </div>
   </ion-content>
 </ion-view>
