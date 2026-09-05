@@ -561,3 +561,105 @@ map {
   display: block;
   margin: 0 auto;
 }
+
+/* ===== SOBRE NÓS (configuracao.html) — mesmo visual das outras páginas ===== */
+.notif-about-names {
+  color: #7f5a48;
+  font-weight: 800;
+  font-size: 1.05rem;
+  text-align: center;
+  margin: 0 0 10px !important;
+}
+.notif-about-slogan {
+  color: #33cd5f;
+  font-weight: 800;
+  font-size: 1rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 12px 0 !important;
+}
+.notif-about-img {
+  text-align: center;
+  margin-top: 10px;
+}
+.notif-about-img img {
+  width: 90%;
+  max-width: 420px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+.notif-about-logo {
+  text-align: center;
+  margin-top: 12px;
+  cursor: pointer;
+}
+.notif-about-logo img {
+  width: 50%;
+  max-width: 200px;
+  height: auto;
+}
+
+/* ===== DENÚNCIA (camera.html) — mesmo visual das outras páginas ===== */
+.notif-camera-preview {
+  text-align: center;
+  padding: 14px 14px 0;
+}
+.notif-camera-img {
+  width: 100%;
+  max-width: 320px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  background: #fafafa;
+  cursor: pointer;
+}
+.notif-camera-actions {
+  padding: 14px;
+  justify-content: center;
+}
+.notif-option-location {
+  border-color: #7f5a48;
+  color: #7f5a48;
+  font-weight: 700;
+}
+.notif-option-location:hover,
+.notif-option-location.active {
+  border-color: #33cd5f;
+  background: #eafaf0;
+  color: #7f5a48;
+}
+
+/* ===== Mapa em modal (denúncia) ===== */
+.mapa-modal {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.notif-map-footer {
+  padding: 6px 10px;
+}
+.notif-map-btn {
+  margin: 0;
+}
+
+/* ===== Mapa em modal (denúncia) — container com altura garantida ===== */
+.mapa-content {
+  overflow: hidden;
+}
+.mapa-modal {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  display: block;
+}
+
+/* ===== Mapa INLINE na página da denúncia (sem modal) ===== */
+.mapa-inline {
+  width: 100%;
+  height: 320px;
+  display: block;
+  margin: 0;
+}
