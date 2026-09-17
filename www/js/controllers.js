@@ -1,8 +1,6 @@
 angular.module('app.controllers', ['ngCordova'])
-
 .controller('localizacaoCtrl', ['$scope', '$stateParams', function ($scope, $stateParams) {
 }])
-
 .controller('EmailController', function ($scope) {
   $scope.sendFeedback = function () {
     if (window.plugins && window.plugins.emailComposer) {
@@ -18,7 +16,6 @@ angular.module('app.controllers', ['ngCordova'])
     }
   };
 })
-
 .controller('emailCtrl', function ($cordovaEmailComposer) {
   $cordovaEmailComposer.isAvailable().then(function () {
     const email = {
@@ -32,7 +29,6 @@ angular.module('app.controllers', ['ngCordova'])
     console.log('E-mail indisponível no momento');
   });
 })
-
 .controller('notificacoesCtrl', function ($scope, $http, $firebaseArray, buscarUsuario, solicitacaoPoda, ionicSuperPopup, $ionicModal, $ionicPopup) {
   $scope.userDados = {};
   $scope.currentUid = null;
@@ -42,7 +38,6 @@ angular.module('app.controllers', ['ngCordova'])
     tipoPodador: 'aleatorio',
     podador: null
   };
-
   // ===== Carrega os dados do usuário logado =====
   function carregarUsuario(user) {
     $scope.currentUid = user.uid;
@@ -55,7 +50,6 @@ angular.module('app.controllers', ['ngCordova'])
       if (!$scope.$$phase) $scope.$digest();
     });
   }
-
   // ===== Carrega SOMENTE as solicitações do usuário logado =====
   function carregarSolicitacoes() {
     $scope.listaAberta = {};   // limpa a lista antiga (OUTRA conta)
@@ -71,7 +65,6 @@ angular.module('app.controllers', ['ngCordova'])
       if (!$scope.$$phase) $scope.$digest();
     });
   }
-
   firebase.auth().onAuthStateChanged(function (user) {
     if (!user) {
       $scope.listaAberta = {};
@@ -80,7 +73,6 @@ angular.module('app.controllers', ['ngCordova'])
     carregarUsuario(user);
     carregarSolicitacoes();
   });
-
   // ===== Recarrega sempre que a tela for exibida (mata a view em cache) =====
   $scope.$on('$ionicView.beforeEnter', function () {
     var user = firebase.auth().currentUser;
@@ -89,7 +81,6 @@ angular.module('app.controllers', ['ngCordova'])
       carregarSolicitacoes();
     }
   });
-
   // Lista de podadores cadastrados
   $scope.listaPodadores = [];
   firebase.database().ref('podador').on('value', function (snap) {
@@ -103,12 +94,10 @@ angular.module('app.controllers', ['ngCordova'])
     }
     if (!$scope.$$phase) $scope.$digest();
   });
-
   $scope.escolherPodador = function (tipo) {
     $scope.solicitacao.tipoPodador = tipo;
     if (tipo === 'aleatorio') $scope.solicitacao.podador = null;
   };
-
   // Busca o endereço pelo CEP
   $scope.buscarCep = function () {
     var cep = ($scope.solicitacao.cep || '').replace(/\D/g, '');
@@ -129,7 +118,6 @@ angular.module('app.controllers', ['ngCordova'])
         ionicSuperPopup.show('Erro!', 'Não foi possível consultar o CEP. Preencha manualmente.', 'error');
       });
   };
-
   $scope.enviarSolicitacao = function () {
     const user = firebase.auth().currentUser;
     if (!user) {
@@ -157,7 +145,6 @@ angular.module('app.controllers', ['ngCordova'])
       $scope.solicitacao.detalhes = '';
     });
   };
-
   // ===== Excluir solicitação em aberto — com confirmação =====
   $scope.excluirAberta = function (chave) {
     if (!chave) return;
@@ -174,29 +161,24 @@ angular.module('app.controllers', ['ngCordova'])
       });
     });
   };
-
   $scope.show = false;
   buscarUsuario.get().then(function (data) {
     if (data === true) $scope.show = true;
   });
-
   const ref = firebase.database().ref('notifications');
   $scope.notifications = $firebaseArray(ref);
-
   $scope.excluirRecusada = function (id) {
     if (!id) return;
     solicitacaoPoda.excluirRecusada(id).then(() => {
       ionicSuperPopup.show('Aviso!', 'Solicitação excluída!', 'error');
     });
   };
-
   $ionicModal.fromTemplateUrl('templates/detalhesSolicitacao.html', {
     scope: $scope,
     animation: 'slide-in-up'
   }).then(function (modal) {
     $scope.modal = modal;
   });
-
   $scope.openModal = function (array) {
     $scope.modal.show();
     $scope.detalhesModal = {
@@ -205,23 +187,19 @@ angular.module('app.controllers', ['ngCordova'])
       detalhes: array.detalhes
     };
   };
-
   $scope.closeModal = function () {
     $scope.modal.hide();
   };
-
   $scope.$on('$destroy', function () {
     $scope.modal.remove();
     firebase.database().ref('solicitacaoPoda/aberto').off('value');
   });
 })
-
 .controller('configuracoesCtrl', function ($scope, $state, $cordovaCamera, buscarUsuario) {
   $scope.show = false;
   buscarUsuario.get().then(function (data) {
     if (data === true) $scope.show = true;
   });
-
   $scope.logout = function () {
     firebase.auth().signOut().then(function () {
       $state.go('login');
@@ -229,7 +207,6 @@ angular.module('app.controllers', ['ngCordova'])
       console.log(error);
     });
   };
-
   $scope.pictureProfUrl = '../img/default-profile.png';
   $scope.abrirGaleria = function () {
     const options = {
@@ -241,23 +218,47 @@ angular.module('app.controllers', ['ngCordova'])
     }, function (err) { });
   };
 })
-
 .controller('menuCtrl', function ($scope, buscarUsuario, buscarLista) {
   $scope.show = false;
-  firebase.database().ref('solicitacaoPoda/aberto').on('value', (data) => {
-    $scope.listaAberta = data.val();
+  $scope.currentUid = null;
+
+  // ===== Filtra as solicitações SOMENTE do usuário logado =====
+  function filtrarPorUid(todas) {
+    var minhas = {};
+    angular.forEach(todas || {}, function (v, k) {
+      if (v.uid === $scope.currentUid) minhas[k] = v;
+    });
+    return minhas;
+  }
+
+  // Ao trocar de conta, força a releitura imediata
+  firebase.auth().onAuthStateChanged(function (user) {
+    $scope.currentUid = user ? user.uid : null;
+    firebase.database().ref('solicitacaoPoda/aberto').once('value', function (data) {
+      $scope.listaAberta = filtrarPorUid(data.val());
+      if (!$scope.$$phase) $scope.$digest();
+    });
+    firebase.database().ref('solicitacaoPoda/recusada').once('value', function (data) {
+      $scope.listaRecusada = filtrarPorUid(data.val());
+      if (!$scope.$$phase) $scope.$digest();
+    });
+  });
+
+  // Tempo real: atualiza quando algo muda no Firebase
+  firebase.database().ref('solicitacaoPoda/aberto').on('value', function (data) {
+    $scope.listaAberta = filtrarPorUid(data.val());
     if (!$scope.$$phase) $scope.$digest();
   });
-  firebase.database().ref('solicitacaoPoda/recusada').on('value', (data) => {
-    $scope.listaRecusada = data.val();
+  firebase.database().ref('solicitacaoPoda/recusada').on('value', function (data) {
+    $scope.listaRecusada = filtrarPorUid(data.val());
     if (!$scope.$$phase) $scope.$digest();
   });
+
   buscarUsuario.get().then(function (data) {
     if (data === true) $scope.show = true;
   });
   buscarLista.get();
 })
-
 .controller('cadastroFunc', function ($scope, gerenciarFunc) {
   const auth = firebase.auth().currentUser;
   $scope.user = { nome: '', senha: '', email: '', uidADM: auth ? auth.uid : '', auth: false };
@@ -275,27 +276,23 @@ angular.module('app.controllers', ['ngCordova'])
     }
   };
 })
-
 .controller('gerenciarFuncCtrl', function ($scope) {
   firebase.database().ref('funcionarioADM').on('value', (data) => {
     $scope.listaFunc = data.val();
     if (!$scope.$$phase) $scope.$digest();
   });
 })
-
 .controller('loginCtrl', function ($scope, $state, $ionicLoading, ionicSuperPopup, userService, gerenciarFunc) {
   $scope.login = function () {
-    $state.go('tabsController.notificacoes');
+    $state.go('tabsController.notificacoes', {}, { reload: true });
   };
   $scope.login1 = function () {
-    $state.go('tabsController.camera');
+    $state.go('tabsController.camera', {}, { reload: true });
   };
   $scope.login2 = function () {
-    $state.go('tabsController.configuracoes');
+    $state.go('tabsController.configuracoes', {}, { reload: true });
   };
-
   $scope.user = { email: '', password: '' };
-
   $scope.entrar = function () {
     if (!$scope.user.email || !$scope.user.password) {
       ionicSuperPopup.show('Aviso!', 'Preencha e-mail e senha!', 'warning');
@@ -318,7 +315,7 @@ angular.module('app.controllers', ['ngCordova'])
             userService.createUser(obj2);
           }
         }
-        $state.go('tabsController.notificacoes');
+        $state.go('tabsController.notificacoes', {}, { reload: true });
       })
       .catch(function (error) {
         $ionicLoading.hide();
@@ -331,7 +328,6 @@ angular.module('app.controllers', ['ngCordova'])
       });
   };
 })
-
 .controller('cadastroCtrl', function ($scope, $state, $ionicLoading, ionicSuperPopup, userService) {
   $scope.user = { email: "", nome: "", cidade: "", cpf: "", endereco: "", numero: "", bairro: "", cep: "", telefone: "" };
   $scope.tipo = { status: "" };
@@ -340,7 +336,6 @@ angular.module('app.controllers', ['ngCordova'])
     { id: 2, cidade: 'Olimpia' },
     { id: 3, cidade: 'Mirassol' }
   ];
-
   $scope.Cadastrar = function (nome, senha) {
     $scope.user.nome = nome;
     const senha1 = document.getElementById('cadastro-input5').value;
@@ -378,7 +373,6 @@ angular.module('app.controllers', ['ngCordova'])
       });
   };
 })
-
 .controller('alterarSenhaCtrl', function ($scope, $state, ionicSuperPopup) {
   $scope.alterar = function (senhaAntiga, novaSenha, confirmar) {
     if (novaSenha != confirmar) {
@@ -402,10 +396,8 @@ angular.module('app.controllers', ['ngCordova'])
       });
   };
 })
-
 .controller('esqueciSenhaCtrl', function ($scope, $state, ionicSuperPopup) {
   $scope.email = '';
-
   $scope.enviar = function () {
     if (!$scope.email) {
       ionicSuperPopup.show('Aviso!', 'Informe seu e-mail!', 'warning');
@@ -424,7 +416,6 @@ angular.module('app.controllers', ['ngCordova'])
       });
   };
 })
-
 .controller('cadastrarFuncionarioCtrl', function ($scope, gerenciarFunc) {
   const auth = firebase.auth().currentUser;
   $scope.user = { nome: '', senha: '', email: '', uidADM: auth ? auth.uid : '', auth: false };
@@ -442,8 +433,7 @@ angular.module('app.controllers', ['ngCordova'])
     }
   };
 })
-
-.controller('CameraCtrl', function ($scope, $http, $timeout, $cordovaCamera, $rootScope, $state, $ionicModal, $ionicActionSheet, solicitacaoPoda, ionicSuperPopup, $ionicLoading) {
+.controller('DenunciaCtrl', function ($scope, $http, $timeout, $cordovaCamera, $rootScope, $state, $ionicModal, $ionicActionSheet, solicitacaoPoda, ionicSuperPopup, $ionicLoading) {
   // ===== Dados da denúncia =====
   $scope.denuncia = {
     cep: '',
@@ -453,15 +443,12 @@ angular.module('app.controllers', ['ngCordova'])
     cidade: '',
     uf: ''
   };
-
   $scope.mostrarMapa = false;
-
   $scope.$on('$ionicView.beforeEnter', function () {
     if ($rootScope.formatted_address) {
       $scope.denuncia.endereco = $rootScope.formatted_address;
     }
   });
-
   // ===== Mostra o mapa embutido na própria página =====
   $scope.voltarLocalizacao = function () {
     $scope.mostrarMapa = true;
@@ -470,7 +457,6 @@ angular.module('app.controllers', ['ngCordova'])
       $scope.criarMapa();
     }, 150);
   };
-
   // ===== Cria o mapa manualmente no div inline =====
   $scope.criarMapa = function () {
     var el = document.getElementById('mapa-denuncia');
@@ -485,7 +471,6 @@ angular.module('app.controllers', ['ngCordova'])
     });
     $scope.centrarMapa();
   };
-
   // ===== Centraliza na localização atual (marcador arrastável) =====
   $scope.centrarMapa = function () {
     if (!$scope.map) return;
@@ -512,7 +497,6 @@ angular.module('app.controllers', ['ngCordova'])
       ionicSuperPopup.show('Aviso!', 'Não foi possível obter sua localização. Arraste o marcador até o local da denúncia.', 'warning');
     });
   };
-
   // ===== Preenche o endereço a partir do ponto marcado no mapa =====
   $scope.usarEnderecoMapa = function () {
     if (!$scope.map || !$scope.marker) {
@@ -522,7 +506,6 @@ angular.module('app.controllers', ['ngCordova'])
     var pos = $scope.marker.getPosition();
     var lat = pos.lat();
     var lng = pos.lng();
-
     // 1º) Tenta o Google Geocoder
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({ location: pos }, function (results, status) {
@@ -536,7 +519,6 @@ angular.module('app.controllers', ['ngCordova'])
       }
     });
   };
-
   // ===== Preenche a partir do resultado do Google =====
   $scope.preencherEnderecoGoogle = function (resultado) {
     var comp = resultado.address_components || [];
@@ -557,7 +539,6 @@ angular.module('app.controllers', ['ngCordova'])
     $scope.corrigirCepPeloEndereco();
     if (!$scope.$$phase) $scope.$digest();
   };
-
   // ===== Fallback: busca o endereço no OpenStreetMap (sem chave) =====
   $scope.buscarEnderecoOpenStreetMap = function (lat, lng) {
     $http.get('https://nominatim.openstreetmap.org/reverse', {
@@ -587,14 +568,12 @@ angular.module('app.controllers', ['ngCordova'])
       ionicSuperPopup.show('Erro!', 'Não foi possível obter o endereço deste ponto. Verifique sua conexão.', 'error');
     });
   };
-
   // ===== CORREÇÃO DO CEP (definitiva): consulta o ViaCEP pela rua + cidade + UF =====
   $scope.corrigirCepPeloEndereco = function () {
     var uf = ($scope.denuncia.uf || '').trim().toUpperCase();
     var cidade = $scope.denuncia.cidade || '';
     var rua = $scope.denuncia.endereco || '';
     if (!uf || !cidade || !rua) return;
-
     // Limpa o nome da rua: remove acentos, prefixos (Rua, Av, Praça...) e números
     function limpar(texto) {
       return texto
@@ -604,11 +583,9 @@ angular.module('app.controllers', ['ngCordova'])
         .replace(/\s+/g, ' ')
         .trim();
     }
-
     var url = 'https://viacep.com.br/ws/' + encodeURIComponent(limpar(uf)) + '/' +
               encodeURIComponent(limpar(cidade)) + '/' +
               encodeURIComponent(limpar(rua)) + '/json/';
-
     $http.get(url).then(function (res) {
       var lista = res.data;
       if (!angular.isArray(lista) || !lista.length) {
@@ -629,7 +606,6 @@ angular.module('app.controllers', ['ngCordova'])
       // Silencioso: se falhar, mantém o CEP que veio do mapa
     });
   };
-
   // ===== Lista de CEPs para o usuário escolher (quando a rua tem vários) =====
   $scope.escolherCep = function (lista) {
     var botoes = lista.map(function (item) {
@@ -648,15 +624,12 @@ angular.module('app.controllers', ['ngCordova'])
       }
     });
   };
-
   // ===== Esconde o mapa =====
   $scope.fecharMapa = function () {
     $scope.mostrarMapa = false;
     if (!$scope.$$phase) $scope.$digest();
   };
-
   $scope.pictureUrl = '../img/add_photo.png';
-
   // ===== Tirar foto com a câmera =====
   $scope.fotografar = function () {
     $cordovaCamera.getPicture({
@@ -667,7 +640,6 @@ angular.module('app.controllers', ['ngCordova'])
       $scope.pictureUrl = 'data:image/jpeg;base64,' + data;
     }, function (err) { });
   };
-
   // ===== Escolher foto da galeria =====
   $scope.abrirGaleria = function () {
     $cordovaCamera.getPicture({
@@ -678,7 +650,6 @@ angular.module('app.controllers', ['ngCordova'])
       $scope.pictureUrl = 'data:image/jpeg;base64,' + data;
     }, function (err) { });
   };
-
   // ===== Busca o endereço pelo CEP (ViaCEP - gratuito, sem chave) =====
   $scope.buscarCep = function () {
     var cep = ($scope.denuncia.cep || '').replace(/\D/g, '');
@@ -699,12 +670,10 @@ angular.module('app.controllers', ['ngCordova'])
         ionicSuperPopup.show('Erro!', 'Não foi possível consultar o CEP. Preencha manualmente.', 'error');
       });
   };
-
   $scope.showImages = function (index) {
     $scope.activeSlide = index;
     $scope.showModal('templates/imagemmodal.html');
   };
-
   $scope.showModal = function (templateUrl) {
     $ionicModal.fromTemplateUrl(templateUrl, {
       scope: $scope,
@@ -714,14 +683,11 @@ angular.module('app.controllers', ['ngCordova'])
       $scope.modal.show();
     });
   };
-
   $scope.closeModal = function () {
     $scope.modal.hide();
     $scope.modal.remove();
   };
-
   $scope.obj = { detalhes: "" };
-
   // ===== Enviar denúncia =====
   $scope.salvar = function () {
     const user = firebase.auth().currentUser;
@@ -752,71 +718,10 @@ angular.module('app.controllers', ['ngCordova'])
       $state.go('tabsController.notificacoes');
     });
   };
-
   $scope.$on('$destroy', function () {
     if ($scope.modal) $scope.modal.remove();
   });
 })
-
-.controller('MapCtrl', function ($scope, $ionicLoading, $cordovaGeolocation, $rootScope, $state) {
-  $ionicLoading.show({ template: 'Carregando...', duration: 300 });
-
-  $scope.mapCreated = function (map) {
-    $scope.map = map;
-  };
-
-  $scope.pegarLocalizacao = function () {
-    $state.go('tabsController.camera');
-  };
-
-  $scope.centerOnMe = function () {
-    if (!$scope.map) {
-      return;
-    }
-    $scope.loading = $ionicLoading.show({
-      content: 'Capturando localização atual...',
-      showBackdrop: false,
-      duration: 3000
-    });
-    navigator.geolocation.getCurrentPosition(function (pos) {
-      $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-      $scope.loading.hide();
-    }, function (error) {
-      alert('Impossível carregar localização: ' + error.message);
-    });
-  };
-
-  const watchOptions = { timeout: 3000, enableHighAccuracy: false };
-  let marker;
-  let streetname;
-  const watch = $cordovaGeolocation.watchPosition(watchOptions, $scope);
-  watch.then(null, function (err) { }, function (position) {
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
-    $scope.map.setCenter(new google.maps.LatLng(lat, lng));
-    google.maps.event.addListenerOnce($scope.map, 'idle', function () {
-      if (marker) marker.setMap(null);
-      marker = new google.maps.Marker({
-        map: $scope.map,
-        animation: google.maps.Animation.DROP,
-        position: new google.maps.LatLng(lat, lng)
-      });
-    });
-    const geocoder = new google.maps.Geocoder();
-    const latlng = new google.maps.LatLng(lat, lng);
-    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
-      if (status == google.maps.GeocoderStatus.OK && results[1]) {
-        $rootScope.formatted_address = results[0].address_components[1].long_name + ", " + results[1].formatted_address;
-        if (results[0].types[0] == 'street_address' && results[0].address_components[1]) {
-          streetname = results[0].address_components[1].long_name;
-        } else if (results[0].types[0] == 'route') {
-          streetname = results[0].address_components[0].long_name;
-        }
-      }
-    });
-  });
-})
-
 // Faz o textarea crescer sozinho conforme digita
 .directive('autoGrow', function () {
   return {
