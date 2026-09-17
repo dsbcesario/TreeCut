@@ -4,23 +4,13 @@ angular.module('app.routes', [])
 
   $stateProvider
 
-    .state('tabsController.camera', {
+    .state('tabsController.denuncia', {
       url: '/page2',
       cache: false,
       views: {
         'tab1': {
-          templateUrl: 'templates/camera.html',
-          controller: 'CameraCtrl'
-        }
-      }
-    })
-
-    .state('tabsController.localizacao', {
-      url: '/page3',
-      views: {
-        'tab2': {
-          templateUrl: 'templates/localizacao.html',
-          controller: 'MapCtrl'
+          templateUrl: 'templates/denuncia.html',
+          controller: 'DenunciaCtrl'
         }
       }
     })
