@@ -663,3 +663,22 @@ map {
   display: block;
   margin: 0;
 }
+
+/* ===== Separar solicitações e denúncias ===== */
+.notif-podador {
+  color: #33cd5f;
+  font-weight: 700;
+}
+.notif-waiting {
+  color: #f0ad4e;
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* ===== Rodapé do item: tag à direita + botão Excluir ===== */
+.notif-item-footer {
+  display: flex;
+  justify-content: space-between; /* botão à esquerda, tag à direita */
+  align-items: center;
+  margin-top: 10px;
+}

@@ -50,21 +50,48 @@ angular.module('app.controllers', ['ngCordova'])
       if (!$scope.$$phase) $scope.$digest();
     });
   }
-  // ===== Carrega SOMENTE as solicitações do usuário logado =====
+  // ===== Carrega SOMENTE as solicitações do usuário logado (separando denúncias) =====
   function carregarSolicitacoes() {
-    $scope.listaAberta = {};   // limpa a lista antiga (OUTRA conta)
+    $scope.listaAberta = {};       // todas (mantido p/ compatibilidade)
+    $scope.listaSolicitacoes = {}; // só solicitações de poda
+    $scope.listaDenuncias = {};    // só denúncias
     firebase.database().ref('solicitacaoPoda/aberto').on('value', function (data) {
       var todas = data.val() || {};
-      var minhas = {};
+      var minhas = {}, solicitacoes = {}, denuncias = {};
       angular.forEach(todas, function (v, k) {
         if (v.uid === $scope.currentUid) {
           minhas[k] = v;
+          // Solicitação tem tipoPodador; denúncia não tem
+          if (v.tipoPodador) {
+            solicitacoes[k] = v;
+          } else {
+            denuncias[k] = v;
+          }
         }
       });
       $scope.listaAberta = minhas;
+      $scope.listaSolicitacoes = solicitacoes;
+      $scope.listaDenuncias = denuncias;
       if (!$scope.$$phase) $scope.$digest();
     });
   }
+  // ===== Monta o endereço completo =====
+  $scope.enderecoCompleto = function (item) {
+    if (!item) return '';
+    var partes = [];
+    var rua = item.enderecoArvore || item.endereco || '';
+    if (rua) partes.push(rua);
+    if (item.numero) partes.push('nº ' + item.numero);
+    if (item.bairro) partes.push(item.bairro);
+    var cidadeUf = (item.cidade || '') + (item.uf ? (item.cidade ? ' - ' : '') + item.uf : '');
+    if (cidadeUf) partes.push(cidadeUf);
+    if (item.cep) partes.push('CEP ' + item.cep);
+    return partes.join(', ');
+  };
+  // ===== Verifica se a lista tem itens (para o ng-if) =====
+  $scope.temItens = function (lista) {
+    return lista && Object.keys(lista).length > 0;
+  };
   firebase.auth().onAuthStateChanged(function (user) {
     if (!user) {
       $scope.listaAberta = {};
@@ -221,7 +248,6 @@ angular.module('app.controllers', ['ngCordova'])
 .controller('menuCtrl', function ($scope, buscarUsuario, buscarLista) {
   $scope.show = false;
   $scope.currentUid = null;
-
   // ===== Filtra as solicitações SOMENTE do usuário logado =====
   function filtrarPorUid(todas) {
     var minhas = {};
@@ -230,7 +256,6 @@ angular.module('app.controllers', ['ngCordova'])
     });
     return minhas;
   }
-
   // Ao trocar de conta, força a releitura imediata
   firebase.auth().onAuthStateChanged(function (user) {
     $scope.currentUid = user ? user.uid : null;
@@ -243,7 +268,6 @@ angular.module('app.controllers', ['ngCordova'])
       if (!$scope.$$phase) $scope.$digest();
     });
   });
-
   // Tempo real: atualiza quando algo muda no Firebase
   firebase.database().ref('solicitacaoPoda/aberto').on('value', function (data) {
     $scope.listaAberta = filtrarPorUid(data.val());
@@ -253,7 +277,6 @@ angular.module('app.controllers', ['ngCordova'])
     $scope.listaRecusada = filtrarPorUid(data.val());
     if (!$scope.$$phase) $scope.$digest();
   });
-
   buscarUsuario.get().then(function (data) {
     if (data === true) $scope.show = true;
   });
@@ -287,7 +310,7 @@ angular.module('app.controllers', ['ngCordova'])
     $state.go('tabsController.notificacoes', {}, { reload: true });
   };
   $scope.login1 = function () {
-    $state.go('tabsController.camera', {}, { reload: true });
+    $state.go('tabsController.denuncia', {}, { reload: true });   // ← era tabsController.camera
   };
   $scope.login2 = function () {
     $state.go('tabsController.configuracoes', {}, { reload: true });

@@ -202,27 +202,53 @@
         </button>
       </div>
 
-      <!-- ===== Minhas solicitações (abertas) — tag junto ao título + Excluir abaixo ===== -->
-      <div class="list card notif-card" ng-if="listaAberta">
-        <div class="item item-divider notif-divider">Solicitações em aberto</div>
-        <div class="item notif-item" ng-repeat="(key, item) in listaAberta">
+      <!-- ===== SOLICITAÇÕES DE PODA EM ABERTO ===== -->
+      <div class="list card notif-card" ng-if="temItens(listaSolicitacoes)">
+        <div class="item item-divider notif-divider">Solicitações de poda em aberto</div>
 
-          <div class="notif-item-head">
-            <h2 class="notif-item-title">{{item.enderecoArvore || item.endereco}}</h2>
-            <span class="notif-tag" ng-class="item.status === 'aceita' ? 'notif-tag-aceita' : 'notif-tag-analise'">
-              {{item.status === 'aceita' ? 'Aceita' : 'Análise'}}
-            </span>
-          </div>
+        <!-- Sem ng-click aqui — o card NÃO é clicável -->
+        <div class="item notif-item" ng-repeat="(key, item) in listaSolicitacoes">
 
+          <h2 class="notif-item-title">{{ enderecoCompleto(item) }}</h2>
+
+          <p ng-if="item.qtdArvores"><strong>Qtd. árvores:</strong> {{ item.qtdArvores }}</p>
+          <p><strong>Podador:</strong>
+            <span ng-if="item.podador" class="notif-podador">{{ item.podador }}</span>
+            <span ng-if="!item.podador" class="notif-waiting">Aguardando podador...</span>
+          </p>
           <p class="notif-detalhes">{{item.detalhes}}</p>
           <p class="notif-date">{{item.data | date:'dd/MM/yyyy HH:mm'}}</p>
 
-          <button class="button button-small notif-btn-danger notif-excluir-btn" ng-click="excluirAberta(key)">Excluir</button>
+          <div class="notif-item-footer">
+            <span class="notif-tag" ng-class="item.status === 'aceita' ? 'notif-tag-aceita' : 'notif-tag-analise' notif-tag-right">
+              {{item.status === 'aceita' ? 'Aceita' : 'Análise'}}
+            </span>
+            <button class="button button-small notif-btn-danger notif-excluir-btn" ng-click="excluirAberta(key)">Excluir</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DENÚNCIAS EM ABERTO ===== -->
+      <div class="list card notif-card" ng-if="temItens(listaDenuncias)">
+        <div class="item item-divider notif-divider">Denúncias em aberto</div>
+
+        <!-- Sem ng-click aqui — o card NÃO é clicável -->
+        <div class="item notif-item" ng-repeat="(key, item) in listaDenuncias">
+
+          <h2 class="notif-item-title">{{ enderecoCompleto(item) }}</h2>
+          <p class="notif-detalhes">{{item.detalhes}}</p>
+          <p class="notif-date">{{item.data | date:'dd/MM/yyyy HH:mm'}}</p>
+
+          <!-- Rodapé: tag na DIREITA + botão Excluir (único clicável) -->
+          <div class="notif-item-footer">
+            <span class="notif-tag notif-tag-analise notif-tag-right">Denúncia</span>
+            <button class="button button-small notif-btn-danger notif-excluir-btn" ng-click="excluirAberta(key)">Excluir</button>
+          </div>
         </div>
       </div>
 
       <!-- ===== Solicitações recusadas ===== -->
-      <div class="list card notif-card" ng-if="listaRecusada">
+      <div class="list card notif-card" ng-if="temItens(listaRecusada)">
         <div class="item item-divider notif-divider">Solicitações recusadas</div>
         <div class="item notif-item" ng-repeat="(key, item) in listaRecusada">
           <h2 class="notif-item-title">{{item.enderecoArvore || item.endereco}}</h2>
