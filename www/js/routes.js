@@ -29,7 +29,7 @@ angular.module('app.routes', [])
       url: '/pageconfig',
       views: {
         'tab4': {
-          templateUrl: 'templates/configuracao.html',
+          templateUrl: 'templates/sobrenos.html',   // ← era configuracao.html
           controller: 'configuracoesCtrl'
         }
       }
