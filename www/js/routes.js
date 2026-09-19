@@ -4,11 +4,21 @@ angular.module('app.routes', [])
 
   $stateProvider
 
+    .state('tabsController.editarPerfil', {
+      url: '/pageperfil',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/editarPerfil.html',
+          controller: 'editarPerfilCtrl'
+        }
+      }
+    })
+
     .state('tabsController.denuncia', {
       url: '/page2',
       cache: false,
       views: {
-        'tab1': {
+        'menuContent': {
           templateUrl: 'templates/denuncia.html',
           controller: 'DenunciaCtrl'
         }
@@ -18,7 +28,7 @@ angular.module('app.routes', [])
     .state('tabsController.notificacoes', {
       url: '/page4',
       views: {
-        'tab3': {
+        'menuContent': {
           templateUrl: 'templates/notificacoes.html',
           controller: 'notificacoesCtrl'
         }
@@ -28,8 +38,8 @@ angular.module('app.routes', [])
     .state('tabsController.configuracoes', {
       url: '/pageconfig',
       views: {
-        'tab4': {
-          templateUrl: 'templates/sobrenos.html',   // ← era configuracao.html
+        'menuContent': {
+          templateUrl: 'templates/sobrenos.html',
           controller: 'configuracoesCtrl'
         }
       }
