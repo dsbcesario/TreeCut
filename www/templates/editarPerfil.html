@@ -1,0 +1,64 @@
+<ion-view title="Editar Perfil" id="pageperfil" ng-controller="editarPerfilCtrl">
+  <ion-nav-buttons side="left">
+    <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="true" class="has-header notif-bg">
+    <div class="notif-container">
+
+      <div class="list card notif-card">
+        <div class="item item-divider notif-divider">Dados pessoais</div>
+
+        <div class="notif-grid">
+          <label class="item item-input notif-input notif-full">
+            <span class="input-label">Nome*:</span>
+            <input type="text" ng-model="perfil.nome" placeholder="Seu nome completo">
+          </label>
+
+          <label class="item item-input notif-input">
+            <span class="input-label">CPF*:</span>
+            <input type="text" ng-model="perfil.cpf" placeholder="000.000.000-00">
+          </label>
+
+          <label class="item item-input notif-input">
+            <span class="input-label">Telefone*:</span>
+            <input type="tel" ng-model="perfil.telefone" placeholder="(17) 99999-9999">
+          </label>
+
+          <label class="item item-input notif-input notif-full">
+            <span class="input-label">E-mail:</span>
+            <input type="email" ng-model="perfil.email" readonly>
+          </label>
+
+          <label class="item item-input notif-input notif-full">
+            <span class="input-label">Endereço:</span>
+            <input type="text" ng-model="perfil.endereco" placeholder="Rua">
+          </label>
+
+          <label class="item item-input notif-input">
+            <span class="input-label">Nº:</span>
+            <input type="text" ng-model="perfil.numero" placeholder="123">
+          </label>
+
+          <label class="item item-input notif-input">
+            <span class="input-label">Bairro:</span>
+            <input type="text" ng-model="perfil.bairro" placeholder="Bairro">
+          </label>
+
+          <label class="item item-input notif-input">
+            <span class="input-label">CEP:</span>
+            <input type="text" ng-model="perfil.cep" placeholder="00000-000">
+          </label>
+
+          <label class="item item-input notif-input">
+            <span class="input-label">Cidade:</span>
+            <input type="text" ng-model="perfil.cidade" placeholder="Cidade">
+          </label>
+        </div>
+      </div>
+
+      <button class="button button-block notif-btn" ng-click="salvarPerfil()">Salvar alterações</button>
+
+    </div>
+  </ion-content>
+</ion-view>
