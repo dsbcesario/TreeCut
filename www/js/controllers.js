@@ -245,10 +245,11 @@ angular.module('app.controllers', ['ngCordova'])
     }, function (err) { });
   };
 })
-.controller('menuCtrl', function ($scope, buscarUsuario, buscarLista) {
+
+.controller('menuCtrl', function ($scope, $state, buscarUsuario, buscarLista) {
   $scope.show = false;
   $scope.currentUid = null;
-  // ===== Filtra as solicitações SOMENTE do usuário logado =====
+
   function filtrarPorUid(todas) {
     var minhas = {};
     angular.forEach(todas || {}, function (v, k) {
@@ -256,7 +257,7 @@ angular.module('app.controllers', ['ngCordova'])
     });
     return minhas;
   }
-  // Ao trocar de conta, força a releitura imediata
+
   firebase.auth().onAuthStateChanged(function (user) {
     $scope.currentUid = user ? user.uid : null;
     firebase.database().ref('solicitacaoPoda/aberto').once('value', function (data) {
@@ -268,7 +269,7 @@ angular.module('app.controllers', ['ngCordova'])
       if (!$scope.$$phase) $scope.$digest();
     });
   });
-  // Tempo real: atualiza quando algo muda no Firebase
+
   firebase.database().ref('solicitacaoPoda/aberto').on('value', function (data) {
     $scope.listaAberta = filtrarPorUid(data.val());
     if (!$scope.$$phase) $scope.$digest();
@@ -277,11 +278,59 @@ angular.module('app.controllers', ['ngCordova'])
     $scope.listaRecusada = filtrarPorUid(data.val());
     if (!$scope.$$phase) $scope.$digest();
   });
+  // ===== Navegação do menu lateral (mesmo padrão do logout) =====
+  $scope.abrirPerfil = function () {
+    $state.go('tabsController.editarPerfil');
+  };
+  $scope.abrirSolicitacao = function () {
+    $state.go('tabsController.notificacoes');
+  };
+  $scope.abrirDenuncia = function () {
+    $state.go('tabsController.denuncia');
+  };
+  $scope.abrirSobreNos = function () {
+    $state.go('tabsController.configuracoes');
+  };
+  // ===== Logout (item do menu lateral) =====
+  $scope.logout = function () {
+    firebase.auth().signOut().then(function () {
+      $state.go('login');
+    }, function (error) {
+      console.log(error);
+    });
+  };
+
   buscarUsuario.get().then(function (data) {
     if (data === true) $scope.show = true;
   });
   buscarLista.get();
 })
+
+.controller('editarPerfilCtrl', function ($scope, $state, $ionicLoading, ionicSuperPopup) {
+  $scope.perfil = {};
+  var user = firebase.auth().currentUser;
+  if (!user) {
+    $state.go('login');
+    return;
+  }
+  firebase.database().ref('user/' + user.uid).once('value').then(function (snap) {
+    $scope.perfil = snap.val() || {};
+    if (!$scope.$$phase) $scope.$digest();
+  });
+  $scope.salvarPerfil = function () {
+    var user = firebase.auth().currentUser;
+    if (!user) return;
+    $ionicLoading.show({ template: 'Salvando...', duration: 3000 });
+    firebase.database().ref('user/' + user.uid).update($scope.perfil).then(function () {
+      $ionicLoading.hide();
+      ionicSuperPopup.show('Feito!', 'Perfil atualizado com sucesso!', 'success');
+    }).catch(function (err) {
+      $ionicLoading.hide();
+      ionicSuperPopup.show('Erro!', err.message, 'error');
+    });
+  };
+})
+
 .controller('cadastroFunc', function ($scope, gerenciarFunc) {
   const auth = firebase.auth().currentUser;
   $scope.user = { nome: '', senha: '', email: '', uidADM: auth ? auth.uid : '', auth: false };
