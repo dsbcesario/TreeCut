@@ -682,3 +682,73 @@ map {
   align-items: center;
   margin-top: 10px;
 }
+
+/* ===== MENU LATERAL — tom cinza opaco (só o menu) ===== */
+.menu,
+.menu-left {
+  background: #3f3f3f !important;   /* cinza médio opaco */
+}
+
+/* Cabeçalho do menu (barra "TreeCut") */
+.menu .bar-header,
+.menu .bar-stable {
+  background: #333333 !important;
+  border-color: #4a4a4a !important;
+}
+.menu .bar-header .title {
+  color: #ffffff !important;
+}
+
+/* Itens do menu */
+.menu .list,
+.menu .item {
+  background: transparent !important;
+  border-color: #4d4d4d !important;
+  color: #f0f0f0 !important;
+}
+.menu .item .icon {
+  color: #33cd5f !important;   /* mantém o verde da marca */
+}
+
+/* Efeito ao tocar/passar o mouse */
+.menu .item.activated,
+.menu .item:active {
+  background: #4d4d4d !important;
+}
+
+/* ===== Itens do menu: garante fundo e texto legíveis ===== */
+.menu .item {
+  background: #3f3f3f !important;
+  color: #ffffff !important;
+  border-color: #4d4d4d !important;
+}
+.menu .item .icon {
+  color: #33cd5f !important;
+}
+.menu .item.activated,
+.menu .item:active {
+  background: #4d4d4d !important;
+}
+
+/* ===== Menu lateral — separação evidente entre os botões ===== */
+.menu .item {
+  margin: 8px 12px !important;
+  padding: 16px 14px 16px 54px !important;  /* ← 54px à esquerda reserva o espaço do ícone */
+  border-radius: 10px !important;
+  border: 1px solid #4d4d4d !important;
+  background: #3f3f3f !important;
+  color: #ffffff !important;
+}
+
+/* Ícone: mais espaço entre ícone e texto */
+.menu .item .icon {
+  margin-right: 14px !important;
+  color: #33cd5f !important;
+}
+
+/* Efeito ao tocar/passar o mouse: fundo mais claro + faixa verde à esquerda */
+.menu .item.activated,
+.menu .item:active {
+  background: #4d4d4d !important;
+  border-left: 4px solid #33cd5f !important;
+}
