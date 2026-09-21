@@ -1,3 +1,6 @@
+// ===== Tipos de cadastro (conforme o cadastro.html) =====
+// 0 = Solicitante (cliente) | 1 = Podador
+var TIPO_PODADOR = '1';
 angular.module('app.controllers', ['ngCordova'])
 .controller('localizacaoCtrl', ['$scope', '$stateParams', function ($scope, $stateParams) {
 }])
@@ -32,40 +35,55 @@ angular.module('app.controllers', ['ngCordova'])
 .controller('notificacoesCtrl', function ($scope, $http, $firebaseArray, buscarUsuario, solicitacaoPoda, ionicSuperPopup, $ionicModal, $ionicPopup) {
   $scope.userDados = {};
   $scope.currentUid = null;
+  $scope.isPodador = false;
   $scope.solicitacao = {
     endereco: '',
     detalhes: '',
     tipoPodador: 'aleatorio',
     podador: null
   };
-  // ===== Carrega os dados do usuário logado =====
-  function carregarUsuario(user) {
+
+  // ===== Carrega usuário + tipo, e SÓ DEPOIS monta as listas =====
+  function carregarTudo(user) {
     $scope.currentUid = user.uid;
     firebase.database().ref('user/' + user.uid).once('value').then(function (snap) {
-      $scope.userDados = snap.val() || {};
-      // Preenche o E-mail 1 com o e-mail do cadastro (se ainda estiver vazio)
+      var dados = snap.val() || {};
+      $scope.userDados = dados;
+      $scope.isPodador = (String(dados.tipo) === TIPO_PODADOR) || (String(dados.tipo).toLowerCase() === 'podador');
       if (!$scope.solicitacao.email1) {
         $scope.solicitacao.email1 = $scope.userDados.email;
       }
+      // Agora sim, com o tipo definido, monta as listas
+      carregarSolicitacoes();
       if (!$scope.$$phase) $scope.$digest();
     });
   }
-  // ===== Carrega SOMENTE as solicitações do usuário logado (separando denúncias) =====
+
+  // ===== Monta as listas conforme o papel =====
+  // Cliente: só as próprias (separando solicitação x denúncia)
+  // Podador: TODAS as solicitações de poda em aberto + as próprias denúncias
   function carregarSolicitacoes() {
-    $scope.listaAberta = {};       // todas (mantido p/ compatibilidade)
-    $scope.listaSolicitacoes = {}; // só solicitações de poda
-    $scope.listaDenuncias = {};    // só denúncias
-    firebase.database().ref('solicitacaoPoda/aberto').on('value', function (data) {
+    var ref = firebase.database().ref('solicitacaoPoda/aberto');
+    ref.off('value'); // remove listeners antigos (evita duplicar ao navegar)
+    ref.on('value', function (data) {
       var todas = data.val() || {};
       var minhas = {}, solicitacoes = {}, denuncias = {};
       angular.forEach(todas, function (v, k) {
-        if (v.uid === $scope.currentUid) {
-          minhas[k] = v;
-          // Solicitação tem tipoPodador; denúncia não tem
+        if ($scope.isPodador) {
+          // Podador: TODAS as solicitações de poda (tem tipoPodador)
           if (v.tipoPodador) {
             solicitacoes[k] = v;
-          } else {
+          } else if (v.uid === $scope.currentUid) {
+            // Denúncias: só as que ele mesmo fez
             denuncias[k] = v;
+          }
+          minhas[k] = v;
+        } else {
+          // Cliente: só as dele
+          if (v.uid === $scope.currentUid) {
+            minhas[k] = v;
+            if (v.tipoPodador) solicitacoes[k] = v;
+            else denuncias[k] = v;
           }
         }
       });
@@ -75,6 +93,7 @@ angular.module('app.controllers', ['ngCordova'])
       if (!$scope.$$phase) $scope.$digest();
     });
   }
+
   // ===== Monta o endereço completo =====
   $scope.enderecoCompleto = function (item) {
     if (!item) return '';
@@ -88,26 +107,28 @@ angular.module('app.controllers', ['ngCordova'])
     if (item.cep) partes.push('CEP ' + item.cep);
     return partes.join(', ');
   };
+
   // ===== Verifica se a lista tem itens (para o ng-if) =====
   $scope.temItens = function (lista) {
     return lista && Object.keys(lista).length > 0;
   };
+
   firebase.auth().onAuthStateChanged(function (user) {
     if (!user) {
       $scope.listaAberta = {};
+      $scope.listaSolicitacoes = {};
+      $scope.listaDenuncias = {};
       return;
     }
-    carregarUsuario(user);
-    carregarSolicitacoes();
+    carregarTudo(user);
   });
-  // ===== Recarrega sempre que a tela for exibida (mata a view em cache) =====
+
+  // ===== Recarrega sempre que a tela for exibida =====
   $scope.$on('$ionicView.beforeEnter', function () {
     var user = firebase.auth().currentUser;
-    if (user) {
-      carregarUsuario(user);
-      carregarSolicitacoes();
-    }
+    if (user) carregarTudo(user);
   });
+
   // Lista de podadores cadastrados
   $scope.listaPodadores = [];
   firebase.database().ref('podador').on('value', function (snap) {
@@ -121,10 +142,12 @@ angular.module('app.controllers', ['ngCordova'])
     }
     if (!$scope.$$phase) $scope.$digest();
   });
+
   $scope.escolherPodador = function (tipo) {
     $scope.solicitacao.tipoPodador = tipo;
     if (tipo === 'aleatorio') $scope.solicitacao.podador = null;
   };
+
   // Busca o endereço pelo CEP
   $scope.buscarCep = function () {
     var cep = ($scope.solicitacao.cep || '').replace(/\D/g, '');
@@ -145,6 +168,7 @@ angular.module('app.controllers', ['ngCordova'])
         ionicSuperPopup.show('Erro!', 'Não foi possível consultar o CEP. Preencha manualmente.', 'error');
       });
   };
+
   $scope.enviarSolicitacao = function () {
     const user = firebase.auth().currentUser;
     if (!user) {
@@ -172,6 +196,7 @@ angular.module('app.controllers', ['ngCordova'])
       $scope.solicitacao.detalhes = '';
     });
   };
+
   // ===== Excluir solicitação em aberto — com confirmação =====
   $scope.excluirAberta = function (chave) {
     if (!chave) return;
@@ -188,24 +213,29 @@ angular.module('app.controllers', ['ngCordova'])
       });
     });
   };
+
   $scope.show = false;
   buscarUsuario.get().then(function (data) {
     if (data === true) $scope.show = true;
   });
+
   const ref = firebase.database().ref('notifications');
   $scope.notifications = $firebaseArray(ref);
+
   $scope.excluirRecusada = function (id) {
     if (!id) return;
     solicitacaoPoda.excluirRecusada(id).then(() => {
       ionicSuperPopup.show('Aviso!', 'Solicitação excluída!', 'error');
     });
   };
+
   $ionicModal.fromTemplateUrl('templates/detalhesSolicitacao.html', {
     scope: $scope,
     animation: 'slide-in-up'
   }).then(function (modal) {
     $scope.modal = modal;
   });
+
   $scope.openModal = function (array) {
     $scope.modal.show();
     $scope.detalhesModal = {
@@ -217,6 +247,7 @@ angular.module('app.controllers', ['ngCordova'])
   $scope.closeModal = function () {
     $scope.modal.hide();
   };
+
   $scope.$on('$destroy', function () {
     $scope.modal.remove();
     firebase.database().ref('solicitacaoPoda/aberto').off('value');
@@ -245,11 +276,9 @@ angular.module('app.controllers', ['ngCordova'])
     }, function (err) { });
   };
 })
-
 .controller('menuCtrl', function ($scope, $state, buscarUsuario, buscarLista) {
   $scope.show = false;
   $scope.currentUid = null;
-
   function filtrarPorUid(todas) {
     var minhas = {};
     angular.forEach(todas || {}, function (v, k) {
@@ -257,7 +286,6 @@ angular.module('app.controllers', ['ngCordova'])
     });
     return minhas;
   }
-
   firebase.auth().onAuthStateChanged(function (user) {
     $scope.currentUid = user ? user.uid : null;
     firebase.database().ref('solicitacaoPoda/aberto').once('value', function (data) {
@@ -269,7 +297,6 @@ angular.module('app.controllers', ['ngCordova'])
       if (!$scope.$$phase) $scope.$digest();
     });
   });
-
   firebase.database().ref('solicitacaoPoda/aberto').on('value', function (data) {
     $scope.listaAberta = filtrarPorUid(data.val());
     if (!$scope.$$phase) $scope.$digest();
@@ -299,13 +326,11 @@ angular.module('app.controllers', ['ngCordova'])
       console.log(error);
     });
   };
-
   buscarUsuario.get().then(function (data) {
     if (data === true) $scope.show = true;
   });
   buscarLista.get();
 })
-
 .controller('editarPerfilCtrl', function ($scope, $state, $ionicLoading, ionicSuperPopup) {
   $scope.perfil = {};
   var user = firebase.auth().currentUser;
@@ -330,7 +355,6 @@ angular.module('app.controllers', ['ngCordova'])
     });
   };
 })
-
 .controller('cadastroFunc', function ($scope, gerenciarFunc) {
   const auth = firebase.auth().currentUser;
   $scope.user = { nome: '', senha: '', email: '', uidADM: auth ? auth.uid : '', auth: false };
@@ -410,6 +434,8 @@ angular.module('app.controllers', ['ngCordova'])
   ];
   $scope.Cadastrar = function (nome, senha) {
     $scope.user.nome = nome;
+    // Salva o tipo de cadastro no registro do usuário (0 = solicitante, 1 = podador)
+    $scope.user.tipo = $scope.tipo.status;
     const senha1 = document.getElementById('cadastro-input5').value;
     if (senha1 != senha) {
       ionicSuperPopup.show('Erro!', 'As senhas não se correspondem!', 'warning');
@@ -426,7 +452,10 @@ angular.module('app.controllers', ['ngCordova'])
         return user.updateProfile({ displayName: nome, photoURL: "" });
       })
       .then(function () {
-        if ($scope.tipo.status == 1) return userService.createAdmin();
+        // ❌ REMOVIDO: criava admin para todo mundo com status == 1 (que hoje é Podador)
+        // Se ainda precisar de cadastro de administrador, adicione uma opção
+        // "Administrador" no select do cadastro.html com um valor próprio (ex.: "2")
+        // e trate aqui: if ($scope.user.tipo === '2') return userService.createAdmin();
       })
       .then(function () {
         ionicSuperPopup.show('Bem Vindo!', 'Cadastrado com sucesso.', 'success');
