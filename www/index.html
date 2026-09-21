@@ -30,15 +30,15 @@
   <script>
     // Initialize Firebase
     var config = {
-    apiKey: "AIzaSyDiY1F1oIEoR_4To5TO3utVkFrditEI__g",
-    authDomain: "treecutap.firebaseapp.com",
-    databaseURL: "https://treecutap-default-rtdb.firebaseio.com",
-    projectId: "treecutap",
-    storageBucket: "treecutap.firebasestorage.app",
-    messagingSenderId: "82081187418",
-    appId: "1:82081187418:web:ada020801f73e844f73a63"
-  };
-  firebase.initializeApp(config);
+      apiKey: "AIzaSyDiY1F1oIEoR_4To5TO3utVkFrditEI__g",
+      authDomain: "treecutap.firebaseapp.com",
+      databaseURL: "https://treecutap-default-rtdb.firebaseio.com",
+      projectId: "treecutap",
+      storageBucket: "treecutap.firebasestorage.app",
+      messagingSenderId: "82081187418",
+      appId: "1:82081187418:web:ada020801f73e844f73a63"
+    };
+    firebase.initializeApp(config);
   </script>
 
   <style type="text/css">
@@ -85,12 +85,7 @@
 
 <body ng-app="app" animation="slide-left-right-ios7">
 
-  <ion-nav-bar class="bar-balanced">
-    <ion-nav-back-button></ion-nav-back-button>
-    <ion-nav-title>
-      <img src="img/logo.png" class="nav-logo" alt="TreeCut">
-    </ion-nav-title>
-  </ion-nav-bar>
+  <!-- ✅ ÚNICA COISA DENTRO DO BODY: o nav-view -->
   <ion-nav-view>
   </ion-nav-view>
 
