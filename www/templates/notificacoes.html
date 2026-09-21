@@ -12,198 +12,212 @@
         <img src="img/download.png" alt="Prefeitura">
       </div>
 
-      <!-- ===== Cabeçalho informativo ===== -->
-      <div class="list card notif-card">
+      <!-- ===== FORMULÁRIO — SÓ PARA SOLICITANTES (podador não solicita) ===== -->
+      <div ng-if="!isPodador">
+
+        <!-- ===== Cabeçalho informativo ===== -->
+        <div class="list card notif-card">
+          <div class="item item-text-wrap notif-info">
+            <p>Este formulário serve como procedimento para você solicitar a autorização antes de realizar a poda de suas árvores.</p>
+            <p class="notif-required">*Obrigatório</p>
+          </div>
+        </div>
+
+        <!-- ===== Dados do solicitante ===== -->
+        <div class="list card notif-card">
+          <div class="item item-divider notif-divider">Dados do solicitante</div>
+
+          <div class="notif-grid">
+            <label class="item item-input notif-input notif-full">
+              <span class="input-label">Nome completo*:</span>
+              <input type="text" ng-model="userDados.nome" placeholder="Seu nome completo">
+            </label>
+
+            <label class="item item-input notif-input">
+              <span class="input-label">CPF*:</span>
+              <input type="text" ng-model="userDados.cpf" placeholder="000.000.000-00">
+            </label>
+
+            <label class="item item-input notif-input">
+              <span class="input-label">Telefone*:</span>
+              <input type="tel" ng-model="userDados.telefone" placeholder="(17) 99999-9999">
+            </label>
+
+            <label class="item item-input notif-input notif-full">
+              <span class="input-label">E-mail*:</span>
+              <input type="email" ng-model="userDados.email" placeholder="seuemail@exemplo.com">
+            </label>
+          </div>
+          <p class="notif-hint">Os dados são preenchidos automaticamente com o seu cadastro. Confira antes de enviar.</p>
+        </div>
+
+        <!-- ===== Localização das árvores ===== -->
+        <div class="list card notif-card">
+          <div class="item item-divider notif-divider">Localização das árvores</div>
+
+          <div class="notif-grid">
+            <label class="item item-input notif-input">
+              <span class="input-label">CEP*:</span>
+              <input type="text" ng-model="solicitacao.cep" ng-change="buscarCep()" placeholder="00000-000" maxlength="9">
+            </label>
+
+            <label class="item item-input notif-input">
+              <span class="input-label">Nº do imóvel*:</span>
+              <input type="text" ng-model="solicitacao.numero" placeholder="123">
+            </label>
+
+            <label class="item item-input notif-input notif-full">
+              <span class="input-label">Rua*:</span>
+              <input type="text" ng-model="solicitacao.endereco" placeholder="Digite o nome da rua">
+            </label>
+
+            <label class="item item-input notif-input">
+              <span class="input-label">Esquina com a rua:</span>
+              <input type="text" ng-model="solicitacao.esquina" placeholder="Opcional">
+            </label>
+
+            <label class="item item-input notif-input">
+              <span class="input-label">Bairro*:</span>
+              <input type="text" ng-model="solicitacao.bairro" placeholder="Bairro">
+            </label>
+
+            <label class="item item-input notif-input">
+              <span class="input-label">Cidade*:</span>
+              <input type="text" ng-model="solicitacao.cidade" placeholder="Cidade">
+            </label>
+
+            <label class="item item-input notif-input">
+              <span class="input-label">UF*:</span>
+              <input type="text" ng-model="solicitacao.uf" placeholder="SP">
+            </label>
+          </div>
+          <p class="notif-hint">Digite o CEP e o endereço será preenchido automaticamente. Se preferir, digite na mão.</p>
+        </div>
+
+        <!-- ===== Dados do imóvel ===== -->
+        <div class="list card notif-card">
+          <div class="item item-divider notif-divider">Dados do imóvel</div>
+
+          <div class="notif-radio-group">
+            <div class="notif-radio-block">
+              <p class="notif-question">O imóvel é:*</p>
+              <div class="notif-options">
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoImovel === 'Proprio'}" ng-click="solicitacao.tipoImovel = 'Proprio'">Próprio</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoImovel === 'Alugado'}" ng-click="solicitacao.tipoImovel = 'Alugado'">Alugado</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoImovel === 'AreaPublica'}" ng-click="solicitacao.tipoImovel = 'AreaPublica'">Área Pública</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoImovel === 'Outro'}" ng-click="solicitacao.tipoImovel = 'Outro'">Outro</button>
+              </div>
+            </div>
+
+            <div class="notif-radio-block">
+              <p class="notif-question">Uso do imóvel:*</p>
+              <div class="notif-options">
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.usoImovel === 'Residencial'}" ng-click="solicitacao.usoImovel = 'Residencial'">Residencial</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.usoImovel === 'Comercial'}" ng-click="solicitacao.usoImovel = 'Comercial'">Comercial</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.usoImovel === 'Institucional'}" ng-click="solicitacao.usoImovel = 'Institucional'">Institucional</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.usoImovel === 'Governo'}" ng-click="solicitacao.usoImovel = 'Governo'">Governo Municipal / Estadual / Federal</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.usoImovel === 'Outro'}" ng-click="solicitacao.usoImovel = 'Outro'">Outro</button>
+              </div>
+            </div>
+
+            <div class="notif-radio-block">
+              <p class="notif-question">Local em que a árvore está plantada:*</p>
+              <div class="notif-options">
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.localArvore === 'Calcada'}" ng-click="solicitacao.localArvore = 'Calcada'">Calçada do imóvel</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.localArvore === 'Interna'}" ng-click="solicitacao.localArvore = 'Interna'">Área interna do imóvel</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.localArvore === 'Outro'}" ng-click="solicitacao.localArvore = 'Outro'">Outro</button>
+              </div>
+            </div>
+
+            <div class="notif-radio-block">
+              <p class="notif-question">Será necessário que a Prefeitura retire os galhos?*</p>
+              <div class="notif-options">
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.retirarGalhos === 'Sim'}" ng-click="solicitacao.retirarGalhos = 'Sim'">Sim</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.retirarGalhos === 'Nao'}" ng-click="solicitacao.retirarGalhos = 'Nao'">Não</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Detalhes da poda ===== -->
+        <div class="list card notif-card">
+          <div class="item item-divider notif-divider">Detalhes da poda</div>
+
+          <div class="notif-grid">
+            <label class="item item-input notif-input">
+              <span class="input-label">Quantidade de árvore(s)*:</span>
+              <input type="number" ng-model="solicitacao.qtdArvores" min="1" max="99" placeholder="Ex.: 2">
+            </label>
+          </div>
+
+          <!-- Escolha do podador -->
+          <div class="notif-radio-group">
+            <div class="notif-radio-block">
+              <p class="notif-question">Como deseja enviar a solicitação?*</p>
+              <div class="notif-options">
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoPodador === 'aleatorio'}" ng-click="escolherPodador('aleatorio')">Aleatório</button>
+                <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoPodador === 'especifico'}" ng-click="escolherPodador('especifico')">Escolher podador</button>
+              </div>
+            </div>
+
+            <div class="notif-radio-block" ng-if="solicitacao.tipoPodador === 'especifico'">
+              <p class="notif-question">Selecione o podador:*</p>
+              <div class="item item-input notif-input notif-select-podador">
+                <select ng-model="solicitacao.podador" ng-options="p.nome for p in listaPodadores track by p.$id">
+                  <option value="">Selecione um podador...</option>
+                </select>
+              </div>
+              <p class="notif-hint" ng-if="!listaPodadores.length">Nenhum podador cadastrado no momento.</p>
+            </div>
+          </div>
+
+          <div class="notif-grid">
+            <label class="item item-input notif-input notif-full">
+              <span class="input-label">Justifique o motivo da poda*:</span>
+              <textarea auto-grow ng-model="solicitacao.detalhes" placeholder="Descreva o motivo..."></textarea>
+            </label>
+          </div>
+        </div>
+
+        <!-- ===== Contato ===== -->
+        <div class="list card notif-card">
+          <div class="item item-divider notif-divider">Contato</div>
+
+          <div class="notif-grid">
+            <label class="item item-input notif-input">
+              <span class="input-label">E-mail 1*:</span>
+              <input type="email" ng-model="solicitacao.email1" placeholder="seuemail@exemplo.com">
+            </label>
+
+            <label class="item item-input notif-input">
+              <span class="input-label">E-mail 2:</span>
+              <input type="email" ng-model="solicitacao.email2" placeholder="Opcional">
+            </label>
+          </div>
+          <p class="notif-hint">O andamento da solicitação será enviado para este e-mail.</p>
+        </div>
+
+        <!-- ===== Declaração e envio ===== -->
+        <div class="list card notif-card">
+          <div class="item item-text-wrap">
+            <p class="notif-warning">CONTRATE SOMENTE PODADORES CADASTRADOS NA PREFEITURA MUNICIPAL.</p>
+            <p>Declaro, sob pena da lei, que assumo total responsabilidade pela veracidade das informações aqui prestadas.</p>
+          </div>
+
+          <button class="button button-block notif-btn" ng-click="enviarSolicitacao()">
+            Enviar solicitação
+          </button>
+        </div>
+
+      </div>
+      <!-- ===== FIM DO FORMULÁRIO (só para solicitantes) ===== -->
+
+      <!-- ===== AVISO PARA O PODADOR ===== -->
+      <div class="list card notif-card" ng-if="isPodador">
         <div class="item item-text-wrap notif-info">
-          <p>Este formulário serve como procedimento para você solicitar a autorização antes de realizar a poda de suas árvores.</p>
-          <p class="notif-required">*Obrigatório</p>
+          <p><strong>Você está logado como podador.</strong></p>
+          <p>Veja abaixo todas as solicitações de poda em aberto com os detalhes completos.</p>
         </div>
-      </div>
-
-      <!-- ===== Dados do solicitante ===== -->
-      <div class="list card notif-card">
-        <div class="item item-divider notif-divider">Dados do solicitante</div>
-
-        <div class="notif-grid">
-          <label class="item item-input notif-input notif-full">
-            <span class="input-label">Nome completo*:</span>
-            <input type="text" ng-model="userDados.nome" placeholder="Seu nome completo">
-          </label>
-
-          <label class="item item-input notif-input">
-            <span class="input-label">CPF*:</span>
-            <input type="text" ng-model="userDados.cpf" placeholder="000.000.000-00">
-          </label>
-
-          <label class="item item-input notif-input">
-            <span class="input-label">Telefone*:</span>
-            <input type="tel" ng-model="userDados.telefone" placeholder="(17) 99999-9999">
-          </label>
-
-          <label class="item item-input notif-input notif-full">
-            <span class="input-label">E-mail*:</span>
-            <input type="email" ng-model="userDados.email" placeholder="seuemail@exemplo.com">
-          </label>
-        </div>
-        <p class="notif-hint">Os dados são preenchidos automaticamente com o seu cadastro. Confira antes de enviar.</p>
-      </div>
-
-      <!-- ===== Localização das árvores ===== -->
-      <div class="list card notif-card">
-        <div class="item item-divider notif-divider">Localização das árvores</div>
-
-        <div class="notif-grid">
-          <label class="item item-input notif-input">
-            <span class="input-label">CEP*:</span>
-            <input type="text" ng-model="solicitacao.cep" ng-change="buscarCep()" placeholder="00000-000" maxlength="9">
-          </label>
-
-          <label class="item item-input notif-input">
-            <span class="input-label">Nº do imóvel*:</span>
-            <input type="text" ng-model="solicitacao.numero" placeholder="123">
-          </label>
-
-          <label class="item item-input notif-input notif-full">
-            <span class="input-label">Rua*:</span>
-            <input type="text" ng-model="solicitacao.endereco" placeholder="Digite o nome da rua">
-          </label>
-
-          <label class="item item-input notif-input">
-            <span class="input-label">Esquina com a rua:</span>
-            <input type="text" ng-model="solicitacao.esquina" placeholder="Opcional">
-          </label>
-
-          <label class="item item-input notif-input">
-            <span class="input-label">Bairro*:</span>
-            <input type="text" ng-model="solicitacao.bairro" placeholder="Bairro">
-          </label>
-
-          <label class="item item-input notif-input">
-            <span class="input-label">Cidade*:</span>
-            <input type="text" ng-model="solicitacao.cidade" placeholder="Cidade">
-          </label>
-
-          <label class="item item-input notif-input">
-            <span class="input-label">UF*:</span>
-            <input type="text" ng-model="solicitacao.uf" placeholder="SP">
-          </label>
-        </div>
-        <p class="notif-hint">Digite o CEP e o endereço será preenchido automaticamente. Se preferir, digite na mão.</p>
-      </div>
-
-      <!-- ===== Dados do imóvel ===== -->
-      <div class="list card notif-card">
-        <div class="item item-divider notif-divider">Dados do imóvel</div>
-
-        <div class="notif-radio-group">
-          <div class="notif-radio-block">
-            <p class="notif-question">O imóvel é:*</p>
-            <div class="notif-options">
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoImovel === 'Proprio'}" ng-click="solicitacao.tipoImovel = 'Proprio'">Próprio</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoImovel === 'Alugado'}" ng-click="solicitacao.tipoImovel = 'Alugado'">Alugado</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoImovel === 'AreaPublica'}" ng-click="solicitacao.tipoImovel = 'AreaPublica'">Área Pública</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoImovel === 'Outro'}" ng-click="solicitacao.tipoImovel = 'Outro'">Outro</button>
-            </div>
-          </div>
-
-          <div class="notif-radio-block">
-            <p class="notif-question">Uso do imóvel:*</p>
-            <div class="notif-options">
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.usoImovel === 'Residencial'}" ng-click="solicitacao.usoImovel = 'Residencial'">Residencial</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.usoImovel === 'Comercial'}" ng-click="solicitacao.usoImovel = 'Comercial'">Comercial</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.usoImovel === 'Institucional'}" ng-click="solicitacao.usoImovel = 'Institucional'">Institucional</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.usoImovel === 'Governo'}" ng-click="solicitacao.usoImovel = 'Governo'">Governo Municipal / Estadual / Federal</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.usoImovel === 'Outro'}" ng-click="solicitacao.usoImovel = 'Outro'">Outro</button>
-            </div>
-          </div>
-
-          <div class="notif-radio-block">
-            <p class="notif-question">Local em que a árvore está plantada:*</p>
-            <div class="notif-options">
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.localArvore === 'Calcada'}" ng-click="solicitacao.localArvore = 'Calcada'">Calçada do imóvel</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.localArvore === 'Interna'}" ng-click="solicitacao.localArvore = 'Interna'">Área interna do imóvel</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.localArvore === 'Outro'}" ng-click="solicitacao.localArvore = 'Outro'">Outro</button>
-            </div>
-          </div>
-
-          <div class="notif-radio-block">
-            <p class="notif-question">Será necessário que a Prefeitura retire os galhos?*</p>
-            <div class="notif-options">
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.retirarGalhos === 'Sim'}" ng-click="solicitacao.retirarGalhos = 'Sim'">Sim</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.retirarGalhos === 'Nao'}" ng-click="solicitacao.retirarGalhos = 'Nao'">Não</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== Detalhes da poda ===== -->
-      <div class="list card notif-card">
-        <div class="item item-divider notif-divider">Detalhes da poda</div>
-
-        <div class="notif-grid">
-          <label class="item item-input notif-input">
-            <span class="input-label">Quantidade de árvore(s)*:</span>
-            <input type="number" ng-model="solicitacao.qtdArvores" min="1" max="99" placeholder="Ex.: 2">
-          </label>
-        </div>
-
-        <!-- Escolha do podador -->
-        <div class="notif-radio-group">
-          <div class="notif-radio-block">
-            <p class="notif-question">Como deseja enviar a solicitação?*</p>
-            <div class="notif-options">
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoPodador === 'aleatorio'}" ng-click="escolherPodador('aleatorio')">Aleatório</button>
-              <button type="button" class="notif-option" ng-class="{active: solicitacao.tipoPodador === 'especifico'}" ng-click="escolherPodador('especifico')">Escolher podador</button>
-            </div>
-          </div>
-
-          <div class="notif-radio-block" ng-if="solicitacao.tipoPodador === 'especifico'">
-            <p class="notif-question">Selecione o podador:*</p>
-            <div class="item item-input notif-input notif-select-podador">
-              <select ng-model="solicitacao.podador" ng-options="p.nome for p in listaPodadores track by p.$id">
-                <option value="">Selecione um podador...</option>
-              </select>
-            </div>
-            <p class="notif-hint" ng-if="!listaPodadores.length">Nenhum podador cadastrado no momento.</p>
-          </div>
-        </div>
-
-        <div class="notif-grid">
-          <label class="item item-input notif-input notif-full">
-            <span class="input-label">Justifique o motivo da poda*:</span>
-            <textarea auto-grow ng-model="solicitacao.detalhes" placeholder="Descreva o motivo..."></textarea>
-          </label>
-        </div>
-      </div>
-
-      <!-- ===== Contato ===== -->
-      <div class="list card notif-card">
-        <div class="item item-divider notif-divider">Contato</div>
-
-        <div class="notif-grid">
-          <label class="item item-input notif-input">
-            <span class="input-label">E-mail 1*:</span>
-            <input type="email" ng-model="solicitacao.email1" placeholder="seuemail@exemplo.com">
-          </label>
-
-          <label class="item item-input notif-input">
-            <span class="input-label">E-mail 2:</span>
-            <input type="email" ng-model="solicitacao.email2" placeholder="Opcional">
-          </label>
-        </div>
-        <p class="notif-hint">O andamento da solicitação será enviado para este e-mail.</p>
-      </div>
-
-      <!-- ===== Declaração e envio ===== -->
-      <div class="list card notif-card">
-        <div class="item item-text-wrap">
-          <p class="notif-warning">CONTRATE SOMENTE PODADORES CADASTRADOS NA PREFEITURA MUNICIPAL.</p>
-          <p>Declaro, sob pena da lei, que assumo total responsabilidade pela veracidade das informações aqui prestadas.</p>
-        </div>
-
-        <button class="button button-block notif-btn" ng-click="enviarSolicitacao()">
-          Enviar solicitação
-        </button>
       </div>
 
       <!-- ===== SOLICITAÇÕES DE PODA EM ABERTO ===== -->
@@ -215,19 +229,24 @@
 
           <h2 class="notif-item-title">{{ enderecoCompleto(item) }}</h2>
 
+          <!-- ===== Detalhes completos (visíveis para o podador) ===== -->
+          <p ng-if="isPodador"><strong>Solicitante:</strong> {{ item.nome }}</p>
+          <p ng-if="isPodador && item.telefone"><strong>Telefone:</strong> {{ item.telefone }}</p>
+          <p ng-if="isPodador && item.email"><strong>E-mail:</strong> {{ item.email }}</p>
           <p ng-if="item.qtdArvores"><strong>Qtd. árvores:</strong> {{ item.qtdArvores }}</p>
           <p><strong>Podador:</strong>
             <span ng-if="item.podador" class="notif-podador">{{ item.podador }}</span>
             <span ng-if="!item.podador" class="notif-waiting">Aguardando podador...</span>
           </p>
-          <p class="notif-detalhes">{{item.detalhes}}</p>
+          <p class="notif-detalhes"><strong>Justificativa:</strong> {{item.detalhes}}</p>
           <p class="notif-date">{{item.data | date:'dd/MM/yyyy HH:mm'}}</p>
 
+          <!-- Botão Excluir (único clicável) + tag no canto inferior direito -->
           <div class="notif-item-footer">
-            <span class="notif-tag" ng-class="item.status === 'aceita' ? 'notif-tag-aceita' : 'notif-tag-analise' notif-tag-right">
+            <button class="button button-small notif-btn-danger notif-excluir-btn" ng-click="excluirAberta(key)">Excluir</button>
+            <span class="notif-tag" ng-class="item.status === 'aceita' ? 'notif-tag-aceita' : 'notif-tag-analise'">
               {{item.status === 'aceita' ? 'Aceita' : 'Análise'}}
             </span>
-            <button class="button button-small notif-btn-danger notif-excluir-btn" ng-click="excluirAberta(key)">Excluir</button>
           </div>
         </div>
       </div>
@@ -243,10 +262,10 @@
           <p class="notif-detalhes">{{item.detalhes}}</p>
           <p class="notif-date">{{item.data | date:'dd/MM/yyyy HH:mm'}}</p>
 
-          <!-- Rodapé: tag na DIREITA + botão Excluir (único clicável) -->
+          <!-- Botão Excluir (único clicável) + tag amarela no canto inferior direito -->
           <div class="notif-item-footer">
-            <span class="notif-tag notif-tag-analise notif-tag-right">Denúncia</span>
             <button class="button button-small notif-btn-danger notif-excluir-btn" ng-click="excluirAberta(key)">Excluir</button>
+            <span class="notif-tag notif-tag-analise">Denúncia</span>
           </div>
         </div>
       </div>
