@@ -220,16 +220,15 @@
         </div>
       </div>
 
-      <!-- ===== SOLICITAÇÕES DE PODA EM ABERTO ===== -->
+            <!-- ===== SOLICITAÇÕES DE PODA EM ABERTO ===== -->
       <div class="list card notif-card" ng-if="temItens(listaSolicitacoes)">
         <div class="item item-divider notif-divider">Solicitações de poda em aberto</div>
 
-        <!-- Sem ng-click aqui — o card NÃO é clicável -->
         <div class="item notif-item" ng-repeat="(key, item) in listaSolicitacoes">
 
           <h2 class="notif-item-title">{{ enderecoCompleto(item) }}</h2>
 
-          <!-- ===== Detalhes completos (visíveis para o podador) ===== -->
+          <!-- Detalhes completos (visíveis para o podador) -->
           <p ng-if="isPodador"><strong>Solicitante:</strong> {{ item.nome }}</p>
           <p ng-if="isPodador && item.telefone"><strong>Telefone:</strong> {{ item.telefone }}</p>
           <p ng-if="isPodador && item.email"><strong>E-mail:</strong> {{ item.email }}</p>
@@ -241,17 +240,51 @@
           <p class="notif-detalhes"><strong>Justificativa:</strong> {{item.detalhes}}</p>
           <p class="notif-date">{{item.data | date:'dd/MM/yyyy HH:mm'}}</p>
 
-          <!-- Botão Excluir (único clicável) + tag no canto inferior direito -->
+                    <!-- Rodapé: ações à ESQUERDA + tag de status à DIREITA -->
           <div class="notif-item-footer">
-            <button class="button button-small notif-btn-danger notif-excluir-btn" ng-click="excluirAberta(key)">Excluir</button>
+
+            <!-- ===== Lado esquerdo: ações ===== -->
+            <div class="notif-footer-left">
+
+              <!-- Podador: Aceitar poda -->
+              <button ng-if="isPodador && item.status !== 'aceita'"
+                      class="button button-small notif-btn-success"
+                      ng-click="aceitarSolicitacao(key, item)">
+                Aceitar poda
+              </button>
+
+              <!-- Podador: já aceitou (pode desmarcar) -->
+              <span ng-if="isPodador && item.status === 'aceita' && item.podadorUid === currentUid" class="notif-accepted">
+                ✅ Você aceitou
+              </span>
+              <button ng-if="isPodador && item.status === 'aceita' && item.podadorUid === currentUid"
+                      class="button button-small button-assertive"
+                      ng-click="desmarcarAceite(key)">
+                Desmarcar
+              </button>
+
+              <!-- Podador: aceita por outro -->
+              <span ng-if="isPodador && item.status === 'aceita' && item.podadorUid !== currentUid" class="notif-waiting">
+                Já aceita por outro podador
+              </span>
+
+              <!-- Solicitante: Excluir (só o dono) -->
+              <button ng-if="!isPodador && item.uid === currentUid"
+                      class="button button-small notif-btn-danger notif-excluir-btn"
+                      ng-click="excluirAberta(key)">Excluir</button>
+
+            </div>
+
+            <!-- ===== Lado direito: tag de status ===== -->
             <span class="notif-tag" ng-class="item.status === 'aceita' ? 'notif-tag-aceita' : 'notif-tag-analise'">
               {{item.status === 'aceita' ? 'Aceita' : 'Análise'}}
             </span>
+
           </div>
         </div>
       </div>
 
-      <!-- ===== DENÚNCIAS EM ABERTO ===== -->
+            <!-- ===== DENÚNCIAS EM ABERTO ===== -->
       <div class="list card notif-card" ng-if="temItens(listaDenuncias)">
         <div class="item item-divider notif-divider">Denúncias em aberto</div>
 
@@ -262,9 +295,11 @@
           <p class="notif-detalhes">{{item.detalhes}}</p>
           <p class="notif-date">{{item.data | date:'dd/MM/yyyy HH:mm'}}</p>
 
-          <!-- Botão Excluir (único clicável) + tag amarela no canto inferior direito -->
+          <!-- Botão Excluir (só o autor da denúncia) + tag amarela no canto inferior direito -->
           <div class="notif-item-footer">
-            <button class="button button-small notif-btn-danger notif-excluir-btn" ng-click="excluirAberta(key)">Excluir</button>
+            <button ng-if="item.uid === currentUid"
+                    class="button button-small notif-btn-danger notif-excluir-btn"
+                    ng-click="excluirAberta(key)">Excluir</button>
             <span class="notif-tag notif-tag-analise">Denúncia</span>
           </div>
         </div>
@@ -276,7 +311,9 @@
         <div class="item notif-item" ng-repeat="(key, item) in listaRecusada">
           <h2 class="notif-item-title">{{item.enderecoArvore || item.endereco}}</h2>
           <p>{{item.detalhes}}</p>
-          <button class="button button-small notif-btn-danger" ng-click="excluirRecusada(key)">Excluir</button>
+          <button ng-if="item.uid === currentUid"
+                  class="button button-small notif-btn-danger"
+                  ng-click="excluirRecusada(key)">Excluir</button>
         </div>
       </div>
 
