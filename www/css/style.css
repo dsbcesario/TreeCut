@@ -752,3 +752,44 @@ map {
   background: #4d4d4d !important;
   border-left: 4px solid #33cd5f !important;
 }
+
+/* ===== Ações do podador nas solicitações ===== */
+.notif-podador-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* ===== Botão Aceitar poda — moldura marrom com letras marrom ===== */
+.notif-btn-success {
+  background: #33cd5f !important;
+  color: #6b4f2a !important;              /* letras marrom */
+  border: 2px solid #6b4f2a !important;   /* moldura marrom */
+  border-radius: 8px !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  font-size: 12px !important;
+  padding: 0 14px !important;
+  line-height: 30px !important;
+}
+.notif-btn-success.activated {
+  background: #f0e6d6 !important;         /* tom levemente areia ao tocar */
+  color: #6b4f2a !important;
+}
+
+/* ===== Registro de aceite do podador ===== */
+.notif-accepted {
+  display: inline-block;
+  color: #2fb24f !important;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+/* ===== Tag "Aceita" mais evidente ===== */
+.notif-tag-aceita {
+  background: #33cd5f !important;
+  color: #ffffff !important;
+  font-weight: bold;
+}
