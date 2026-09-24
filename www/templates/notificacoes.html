@@ -254,9 +254,7 @@
               </button>
 
               <!-- Podador: já aceitou (pode desmarcar) -->
-              <span ng-if="isPodador && item.status === 'aceita' && item.podadorUid === currentUid" class="notif-accepted">
-                ✅ Você aceitou
-              </span>
+              
               <button ng-if="isPodador && item.status === 'aceita' && item.podadorUid === currentUid"
                       class="button button-small button-assertive"
                       ng-click="desmarcarAceite(key)">
