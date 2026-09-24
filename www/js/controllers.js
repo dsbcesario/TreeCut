@@ -130,14 +130,19 @@ angular.module('app.controllers', ['ngCordova'])
   });
 
   // Lista de podadores cadastrados
+    // ===== Lista de podadores: lê de user/ filtrando tipo = "1" =====
   $scope.listaPodadores = [];
-  firebase.database().ref('podador').on('value', function (snap) {
+  firebase.database().ref('user').orderByChild('tipo').equalTo('1').on('value', function (snap) {
     $scope.listaPodadores = [];
     var val = snap.val();
     if (val) {
       angular.forEach(val, function (v, k) {
-        var nome = (typeof v === 'string') ? v : (v.nome || v.razaoSocial || 'Podador');
-        $scope.listaPodadores.push({ $id: k, nome: nome });
+        $scope.listaPodadores.push({
+          $id: k,
+          nome: v.nome || 'Podador',
+          telefone: v.telefone || '',
+          uid: k
+        });
       });
     }
     if (!$scope.$$phase) $scope.$digest();
@@ -212,59 +217,54 @@ angular.module('app.controllers', ['ngCordova'])
         ionicSuperPopup.show('Excluída!', 'Solicitação excluída com sucesso!', 'success');
       });
     });
-    // ===== Podador se marca como responsável pela poda =====
-    $scope.aceitarSolicitacao = function (chave, item) {
-      if (!chave || !$scope.isPodador) return;
-      const user = firebase.auth().currentUser;
-      if (!user) {
-        ionicSuperPopup.show('Erro!', 'Faça login primeiro!', 'error');
-        return;
-      }
-      $ionicPopup.confirm({
-        title: 'Aceitar poda',
-        template: 'Confirmar que você será o podador responsável por esta solicitação?',
-        okText: 'Aceitar',
-        okType: 'button-balanced',
-        cancelText: 'Cancelar'
-      }).then(function (res) {
-        if (!res) return;
-        // Verifica se alguém já aceitou antes (evita aceite duplo)
-        const ref = firebase.database().ref('solicitacaoPoda/aberto/' + chave);
-        ref.once('value').then(function (snap) {
-          const atual = snap.val() || {};
-          if (atual.status === 'aceita') {
-            ionicSuperPopup.show('Aviso!', 'Esta solicitação já foi aceita por outro podador.', 'warning');
-            return;
-          }
-          const nomePodador = $scope.userDados.nome || user.displayName || 'Podador';
-          return ref.update({
-            status: 'aceita',
-            podadorUid: user.uid,
-            podador: nomePodador,
-            dataAceite: Date.now()
-          }).then(function () {
-            ionicSuperPopup.show('Feito!', 'Você foi marcado como podador desta solicitação!', 'success');
-          });
-        }).catch(function (err) {
-          ionicSuperPopup.show('Erro!', err.message, 'error');
-        });
-      });
-    };
+  };
 
-    // ===== (Opcional) Podador desmarca sua aceitação =====
-    $scope.desmarcarAceite = function (chave) {
-      if (!chave) return;
-      firebase.database().ref('solicitacaoPoda/aberto/' + chave).update({
-        status: 'analise',
-        podadorUid: null,
-        podador: null,
-        dataAceite: null
-      }).then(function () {
-        ionicSuperPopup.show('Ok!', 'Aceite removido. A solicitação voltou para análise.', 'success');
+  // ===== Podador se marca como responsável pela poda =====
+  $scope.aceitarSolicitacao = function (chave, item) {
+    console.log('>>> ACEITAR CLICADO | chave:', chave, '| isPodador:', $scope.isPodador);
+    if (!chave) return;
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    try {
+      if (!window.confirm('Confirmar que você será o podador responsável por esta solicitação?')) return;
+      firebase.database().ref('solicitacaoPoda/aberto/' + chave).once('value').then(function (snap) {
+        const atual = snap.val() || {};
+        if (atual.status === 'aceita') {
+          alert('Esta solicitação já foi aceita por outro podador.');
+          return;
+        }
+        const nomePodador = $scope.userDados.nome || user.displayName || 'Podador';
+        return firebase.database().ref('solicitacaoPoda/aberto/' + chave).update({
+          status: 'aceita',
+          podadorUid: user.uid,
+          podador: nomePodador,
+          dataAceite: Date.now()
+        }).then(function () {
+          alert('Você foi marcado como podador desta solicitação!');
+        });
       }).catch(function (err) {
-        ionicSuperPopup.show('Erro!', err.message, 'error');
+        console.error('ERRO AO ACEITAR:', err);
+        alert('Erro: ' + err.message);
       });
-    };
+    } catch (e) {
+      console.error('ERRO NO CLIQUE:', e);
+      alert('Erro: ' + e.message);
+    }
+  };
+
+  // ===== Podador desmarca sua aceitação =====
+  $scope.desmarcarAceite = function (chave) {
+    if (!chave) return;
+    firebase.database().ref('solicitacaoPoda/aberto/' + chave).update({
+      status: 'analise',
+      podadorUid: null,
+      podador: null,
+      dataAceite: null
+    }).then(function () {
+      ionicSuperPopup.show('Ok!', 'Aceite removido. A solicitação voltou para análise.', 'success');
+    }).catch(function (err) {
+      ionicSuperPopup.show('Erro!', err.message, 'error');
+    });
   };
 
   $scope.show = false;
