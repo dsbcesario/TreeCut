@@ -30,22 +30,22 @@
           <div class="notif-grid">
             <label class="item item-input notif-input notif-full">
               <span class="input-label">Nome completo*:</span>
-              <input type="text" ng-model="userDados.nome" placeholder="Seu nome completo">
+              <input type="text" ng-model="userDados.nome" placeholder="Seu nome completo" required>
             </label>
 
             <label class="item item-input notif-input">
               <span class="input-label">CPF*:</span>
-              <input type="text" ng-model="userDados.cpf" placeholder="000.000.000-00">
+              <input type="text" ng-model="userDados.cpf" placeholder="000.000.000-00" required>
             </label>
 
             <label class="item item-input notif-input">
               <span class="input-label">Telefone*:</span>
-              <input type="tel" ng-model="userDados.telefone" placeholder="(17) 99999-9999">
+              <input type="tel" ng-model="userDados.telefone" placeholder="(17) 99999-9999" required>
             </label>
 
             <label class="item item-input notif-input notif-full">
               <span class="input-label">E-mail*:</span>
-              <input type="email" ng-model="userDados.email" placeholder="seuemail@exemplo.com">
+              <input type="email" ng-model="userDados.email" placeholder="seuemail@exemplo.com" required>
             </label>
           </div>
           <p class="notif-hint">Os dados são preenchidos automaticamente com o seu cadastro. Confira antes de enviar.</p>
@@ -58,17 +58,17 @@
           <div class="notif-grid">
             <label class="item item-input notif-input">
               <span class="input-label">CEP*:</span>
-              <input type="text" ng-model="solicitacao.cep" ng-change="buscarCep()" placeholder="00000-000" maxlength="9">
+              <input type="text" ng-model="solicitacao.cep" ng-change="buscarCep()" placeholder="00000-000" maxlength="9" required>
             </label>
 
             <label class="item item-input notif-input">
               <span class="input-label">Nº do imóvel*:</span>
-              <input type="text" ng-model="solicitacao.numero" placeholder="123">
+              <input type="text" ng-model="solicitacao.numero" placeholder="123" required>
             </label>
 
             <label class="item item-input notif-input notif-full">
               <span class="input-label">Rua*:</span>
-              <input type="text" ng-model="solicitacao.endereco" placeholder="Digite o nome da rua">
+              <input type="text" ng-model="solicitacao.endereco" placeholder="Digite o nome da rua" required>
             </label>
 
             <label class="item item-input notif-input">
@@ -78,17 +78,17 @@
 
             <label class="item item-input notif-input">
               <span class="input-label">Bairro*:</span>
-              <input type="text" ng-model="solicitacao.bairro" placeholder="Bairro">
+              <input type="text" ng-model="solicitacao.bairro" placeholder="Bairro" required>
             </label>
 
             <label class="item item-input notif-input">
               <span class="input-label">Cidade*:</span>
-              <input type="text" ng-model="solicitacao.cidade" placeholder="Cidade">
+              <input type="text" ng-model="solicitacao.cidade" placeholder="Cidade" required>
             </label>
 
             <label class="item item-input notif-input">
               <span class="input-label">UF*:</span>
-              <input type="text" ng-model="solicitacao.uf" placeholder="SP">
+              <input type="text" ng-model="solicitacao.uf" placeholder="SP" required>
             </label>
           </div>
           <p class="notif-hint">Digite o CEP e o endereço será preenchido automaticamente. Se preferir, digite na mão.</p>
@@ -146,7 +146,7 @@
           <div class="notif-grid">
             <label class="item item-input notif-input">
               <span class="input-label">Quantidade de árvore(s)*:</span>
-              <input type="number" ng-model="solicitacao.qtdArvores" min="1" max="99" placeholder="Ex.: 2">
+              <input type="number" ng-model="solicitacao.qtdArvores" min="1" max="99" placeholder="Ex.: 2" required>
             </label>
           </div>
 
@@ -174,7 +174,7 @@
           <div class="notif-grid">
             <label class="item item-input notif-input notif-full">
               <span class="input-label">Justifique o motivo da poda*:</span>
-              <textarea auto-grow ng-model="solicitacao.detalhes" placeholder="Descreva o motivo..."></textarea>
+              <textarea auto-grow ng-model="solicitacao.detalhes" placeholder="Descreva o motivo..." required></textarea>
             </label>
           </div>
         </div>
@@ -186,7 +186,7 @@
           <div class="notif-grid">
             <label class="item item-input notif-input">
               <span class="input-label">E-mail 1*:</span>
-              <input type="email" ng-model="solicitacao.email1" placeholder="seuemail@exemplo.com">
+              <input type="email" ng-model="solicitacao.email1" placeholder="seuemail@exemplo.com" required>
             </label>
 
             <label class="item item-input notif-input">
