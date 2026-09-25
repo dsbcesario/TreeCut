@@ -180,14 +180,53 @@ angular.module('app.controllers', ['ngCordova'])
       ionicSuperPopup.show('Erro!', 'Faça login primeiro!', 'error');
       return;
     }
+
+    // ===== Validação dos campos obrigatórios (*) =====
+    const faltando = [];
+    const req = [
+      { v: $scope.userDados.nome, label: 'Nome completo' },
+      { v: $scope.userDados.cpf, label: 'CPF' },
+      { v: $scope.userDados.telefone, label: 'Telefone' },
+      { v: $scope.userDados.email, label: 'E-mail' },
+      { v: $scope.solicitacao.cep, label: 'CEP' },
+      { v: $scope.solicitacao.numero, label: 'Nº do imóvel' },
+      { v: $scope.solicitacao.endereco, label: 'Rua' },
+      { v: $scope.solicitacao.bairro, label: 'Bairro' },
+      { v: $scope.solicitacao.cidade, label: 'Cidade' },
+      { v: $scope.solicitacao.uf, label: 'UF' },
+      { v: $scope.solicitacao.tipoImovel, label: 'O imóvel é' },
+      { v: $scope.solicitacao.usoImovel, label: 'Uso do imóvel' },
+      { v: $scope.solicitacao.localArvore, label: 'Local da árvore' },
+      { v: $scope.solicitacao.retirarGalhos, label: 'Retirada de galhos' },
+      { v: $scope.solicitacao.qtdArvores, label: 'Quantidade de árvores' },
+      { v: $scope.solicitacao.detalhes, label: 'Justificativa da poda' },
+      { v: $scope.solicitacao.email1, label: 'E-mail 1' }
+    ];
+    angular.forEach(req, function (campo) {
+      if (campo.v === undefined || campo.v === null || String(campo.v).trim() === '') {
+        faltando.push(campo.label);
+      }
+    });
+
     if ($scope.solicitacao.tipoPodador === 'especifico' && !$scope.solicitacao.podador) {
-      ionicSuperPopup.show('Aviso!', 'Selecione o podador para a solicitação!', 'warning');
+      faltando.push('Seleção do podador');
+    }
+
+    if (faltando.length) {
+      ionicSuperPopup.show('Aviso!', 'Preencha os campos obrigatórios: ' + faltando.join(', '), 'warning');
       return;
     }
+
     const obj = angular.copy($scope.userDados);
     obj.uid = user.uid;
     obj.email = user.email;
     obj.enderecoArvore = $scope.solicitacao.endereco;
+    obj.numero = $scope.solicitacao.numero;
+    obj.bairro = $scope.solicitacao.bairro;
+    obj.cidade = $scope.solicitacao.cidade;
+    obj.uf = $scope.solicitacao.uf;
+    obj.cep = $scope.solicitacao.cep;
+    obj.esquina = $scope.solicitacao.esquina || '';
     obj.detalhes = $scope.solicitacao.detalhes;
     obj.qtdArvores = $scope.solicitacao.qtdArvores;
     obj.tipoPodador = $scope.solicitacao.tipoPodador || 'aleatorio';
@@ -198,7 +237,22 @@ angular.module('app.controllers', ['ngCordova'])
     obj.data = Date.now();
     solicitacaoPoda.createSolicitacao(obj).then(function () {
       ionicSuperPopup.show('Feito!', 'Solicitação enviada com sucesso!', 'success');
-      $scope.solicitacao.detalhes = '';
+      // ===== LIMPA O FORMULÁRIO INTEIRO para a próxima solicitação =====
+      $scope.solicitacao = {
+        endereco: '',
+        numero: '',
+        bairro: '',
+        cidade: '',
+        uf: '',
+        cep: '',
+        esquina: '',
+        qtdArvores: '',
+        detalhes: '',
+        tipoPodador: 'aleatorio',
+        podador: null,
+        email1: $scope.userDados.email,
+        email2: ''
+      };
     });
   };
 
